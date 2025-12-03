@@ -1,10 +1,7 @@
 // Vercel Serverless Function - Entry Point
-// This file imports the built Express server
+import app from '../dist/index.js';
 
-export default async function handler(req, res) {
-  // Import the built server
-  const { default: app } = await import('../dist/index.js');
-  
-  // Handle the request with Express
+export default function handler(req, res) {
+  // Handle the request with the Express app
   return app(req, res);
 }
