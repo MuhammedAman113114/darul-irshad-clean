@@ -1,0 +1,75 @@
+🎯 Goal:
+Build an Excel-based **student attendance sheet** that automatically syncs with your app’s:
+- 📅 Calendar Module (Leave, Emergency Leave, Holidays)
+- ✅ Real-Time Attendance Module
+
+📂 Structure:
+- One Excel Sheet per Class per Month
+  Format: `PU_1st_Year_Commerce_Aug_2025.xlsx`
+- Each sheet = one class (PU 1st Year – Commerce A, Science, etc.)
+
+🧠 Core Sync Rules:
+- All attendance entries (Present/Absent) are synced **live from the attendance screen**
+- All **Leave, Emergency Leave, and Holiday** statuses are pulled from the **calendar module**
+- ❌ No manual edits allowed in synced cells
+- ✅ Every class has its own period structure (PUC = 3, Post-PUC = 6–8), reflected in the sheet
+
+📊 Top Summary (above main table):
+
+| Month | August |
+|-------|--------|
+| Year  | 2025   |
+| Class | PU 1st Year – Commerce – A |
+| Start Date | 01-Aug-2025 |
+| End Date   | 31-Aug-2025 |
+
+📍 Legend (Color-Coded):
+
+- ✅ **P** = Present (Green)
+- ❌ **A** = Absent (Red)
+- 🟡 **L** = On Leave (from calendar)
+- 🟠 **E** = Emergency Leave (from calendar)
+- ⚪ **H** = Holiday (from calendar)
+
+📅 Table Header Example:
+| Roll No | Student Name | 01 (Fri) | 02 (Sat) | ... | 31 (Sun) | Present | Absent | Leave | Emergency | Attendance % |
+
+📘 Each Day Cell (01–31):
+- Pulls status based on:
+  - Calendar events (Holiday, Leave, Emergency)
+  - If not a holiday, use real-time attendance value
+
+📌 Per-Student Calculations (end columns):
+- Present count (✅)
+- Absent count (❌)
+- Leave (🟡)
+- Emergency Leave (🟠)
+- Attendance % = (P / Working Days) × 100
+
+🧩 Sheet Configuration:
+
+- Freeze Header Row + Name Columns
+- Daily headers auto-fill weekday name (Mon/Tue/etc.)
+- Cells protected except for admin override
+- Total working days auto-calculated (excluding holidays)
+- Alerts/Highlights:
+  - 🔴 Attendance < 75% = red highlight
+  - 🟠 3+ Emergency Leaves = orange flag
+
+📤 Output Format:
+- File Name: `PU1_Comm_Aug_2025.xlsx`
+- Sheet Names: `PU_Comm_A`, `PU_Sci`, `3rd_Year_B`, etc.
+- Monthly summary tab optional: `Summary_2025_08`
+
+🔗 Real-Time Data Sources:
+- `calendarModule.holidays[]`
+- `calendarModule.leaves[studentId]`
+- `calendarModule.emergencyLeaves[studentId]`
+- `attendanceData[class][date][studentId]`
+
+✨ Optional Features:
+- 📌 Daily Summary Bar: Total Present / Absent per day
+- 🖋 Signature column (Teacher/Principal)
+- 🗓 Mini visual calendar for event reference
+
+🚀 Output: A polished, accurate, auto-updating Excel sheet powered by your app’s **calendar and attendance engine** — ready to export monthly for clients.

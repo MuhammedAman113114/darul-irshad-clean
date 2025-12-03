@@ -1,0 +1,79 @@
+✅ Problem Summary:
+✅ You mark Zuhr attendance and it saves in DB.
+
+❌ But in the Sheet View, Zuhr status does not render.
+
+✅ Other prayers like Fajr and Asr display correctly.
+
+✅ So it's not a DB issue, it's a rendering issue in sheet logic.
+
+✅ Fix Plan: Make Zuhr behave like Fajr, Asr etc.
+🔧 Step 1: Ensure your Sheet Data Mapping includes Zuhr
+js
+Copy
+Edit
+// Replit-style pseudo structure for grid mapping
+const prayers = ["Fajr", "Zuhr", "Asr", "Maghrib", "Isha"]; // ✅ Include Zuhr!
+
+// Loop day-wise (1 to 31)
+for (let day = 1; day <= maxDays; day++) {
+  prayers.forEach(prayer => {
+    const key = `${day}_${prayer.toLowerCase()}`; // like 6_zuhr
+    const value = studentAttendanceData[key];     // Get from DB/local
+    
+    // ✅ Render the value into the grid
+    renderPrayerCell(value); // value could be P / A / L / -
+  });
+}
+✅ Step 2: Normalize Zuhr Records in DB
+Ensure Zuhr is stored in same format:
+
+json
+Copy
+Edit
+{
+  "student_id": "bathi",
+  "date": "2025-07-06",
+  "prayer": "zuhr", // ✅ lowercase like others
+  "status": "present"
+}
+🔁 If Zuhr is saved differently (like "Zuhr" with uppercase), the sheet won’t match it in .toLowerCase() lookup.
+
+🔄 Fix by forcing .toLowerCase() in both saving and reading logic.
+
+✅ Step 3: Sheet Cell Color Logic (Zuhr must be treated same)
+If you're doing conditionals like this:
+
+js
+Copy
+Edit
+if (prayer === "fajr") showGreenIcon();  // ✅
+if (prayer === "asr") showGreenIcon();   // ✅
+➡️ Make sure you add:
+
+js
+Copy
+Edit
+if (prayer === "zuhr") showGreenIcon();  // ✅ Fix!
+✅ Step 4: Final Checklist
+✅ Check	Description
+prayers list includes Zuhr	✅ Done
+zuhr records saved in lowercase	✅ Must be fixed
+Rendering loop handles zuhr like other prayers	✅ Fix logic
+DB entries structured consistently	✅ "prayer": "zuhr" not "Zuhr"
+
+✍️ Replit Styled Fix Summary (JS snippet)
+js
+Copy
+Edit
+const allPrayers = ["fajr", "zuhr", "asr", "maghrib", "isha"];
+
+function renderSheet(studentData) {
+  for (let day = 1; day <= 31; day++) {
+    allPrayers.forEach(prayer => {
+      const key = `${day}_${prayer}`;
+      const status = studentData[key] || "-";
+      drawCell(prayer, status); // ⬅️ this is your display logic
+    });
+  }
+}

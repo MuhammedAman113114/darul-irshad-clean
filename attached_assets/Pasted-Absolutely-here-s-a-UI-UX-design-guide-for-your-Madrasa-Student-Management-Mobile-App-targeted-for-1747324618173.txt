@@ -1,0 +1,165 @@
+Absolutely — here’s a UI/UX design guide for your Madrasa Student Management Mobile App targeted for Teachers and Principals, focused on clarity, speed, and ease of use on mobile.
+
+🎯 Design Goals
+Goal	UX Approach
+✅ Fast daily operations	One-tap actions, bulk marking
+✅ Easy batch/course navigation	Sticky dropdowns, collapsible cards
+✅ Clarity for role access	Role-based dashboards
+✅ Mobile-first & thumb-friendly	FABs, bottom sheets, cards
+✅ Low cognitive load	Progressive disclosure (show less, drill down)
+
+🧭 1. Role-Based Dashboard (Home Screen)
+✨ Layout:
+Card grid UI: 2 columns, full-width on small screens.
+
+Icons + Labels for recognition (e.g., 📋 Attendance, 🕌 Namaz).
+
+Use role detection to hide/show features.
+
+🎨 Example:
+sql
+Copy
+Edit
++------------------+------------------+
+| 📋 Attendance    | 🕌 Namaz         |
++------------------+------------------+
+| 📝 Leave         | 💬 Remarks       |
++------------------+------------------+
+| 🗂️ Results       | 📅 Calendar      |
++------------------+------------------+
+| ⏰ Period Setup   | 👤 Students       |
++------------------+------------------+
+✅ Use gentle card shadows, large tappable areas, and soft colors (pastel blues, greens).
+
+🧑‍🏫 2. Attendance UX
+📌 Key UX Patterns:
+Sticky dropdowns at the top: Course ➝ Year ➝ Batch ➝ Period
+
+Student list: Use FlatList with avatar, name, roll no.
+
+Default: All marked "Present"
+
+Absent: Toggle with red background or '✗' icon
+
+✅ FAB for Save at bottom-right
+
+✅ Bulk toggle bar on top (Mark All Absent, Reset)
+
+📱 Mobile View:
+scss
+Copy
+Edit
+[Course ▾] [Year ▾] [Batch ▾] [Period ▾]
+-------------------------------------------------
+👤 Ayesha S.       ✔️ (green toggle)
+👤 Bilal K.        ❌ (red toggle)
+👤 Farheen B.      ✔️
+[ + ] Add Period     [💾 Save]
+🕌 3. Namaz Tracking UI
+UX Features:
+Select Namaz session (e.g., Fajr, Dhuhr...)
+
+Batch-wise grid or list
+
+✅ Bulk mark absent per Namaz
+
+🟢 Show total present/absent counts as chips or bars
+
+📝 4. Leave Form UI
+Form Design:
+Use accordion or modal bottom sheet
+
+Fields:
+
+🧍 Student (dropdown or searchable)
+
+📅 From / To (calendar pickers)
+
+✏️ Reason (textarea)
+
+✅ Show current leave list below form with edit/delete icons
+
+📅 5. Calendar View (Principal)
+Mobile Design:
+Monthly calendar view
+
+✅ Tap to toggle day as holiday
+
+✅ ‘+ Emergency Leave’ floating button
+
+✅ PDF Upload button for master calendar
+
+Highlighted days auto-disable attendance
+
+🗂️ 6. Result Upload
+UX Steps:
+Dropdowns: Course ➝ Year ➝ Batch
+
+File upload zone (PDF only)
+
+✅ Show list of uploaded results
+
+Tap to view/download
+
+💬 7. Remarks Flow
+Card UI:
+Select Student ➝ Add remark (textarea)
+
+✅ Auto-tag teacher name, time
+
+View old remarks as a scrollable list
+
+Filter by student or batch
+
+⏰ 8. Period Setup UI (Principal)
+For each course/year:
+
+Display default periods
+
+✅ ‘+ Add Period’ button (opens time pickers)
+
+✅ ‘🗑 Delete’ icon next to period
+
+Time pickers: HH:MM format (e.g., 9:00 AM–10:00 AM)
+
+👤 9. Student Management Screen
+List View:
+Avatars + Name + Roll No
+
+Search bar (top)
+
+✅ FAB to Add Student
+
+Tappable cards open full bio-data (modal or screen)
+
+Add/Edit Form:
+Use section headers: Basic Info, Contacts, Address, Remarks
+
+✅ Use collapsible groups for long forms
+
+📷 Photo picker for student image
+
+🔑 10. Auth & Navigation
+Role	UI Behavior
+Teacher	Dashboard with limited tiles (no calendar, no period setup)
+Principal	Full dashboard
+Navigation	Use bottom tabs or dashboard cards — no hamburger drawer
+
+🎨 Color & Typography Guidelines
+Element	Recommendation
+Background	Soft white or very light grey
+Primary Color	Deep Blue / Green (Islamic themes)
+Accent Colors	Muted Yellow, Teal, Maroon
+Fonts	Sans-serif (Poppins / Roboto)
+Icon Size	24–32 px
+Touch Targets	Min 48x48 dp
+Shadows & Borders	Very subtle, rounded corners (12–16dp)
+
+🧩 Microinteractions to Add
+✅ Tap feedback on cards
+
+✅ Progress bar while uploading
+
+✅ Toasts for “Saved!”, “Marked Absent”, etc.
+
+✅ Haptic feedback on toggle actions (if mobile supports)

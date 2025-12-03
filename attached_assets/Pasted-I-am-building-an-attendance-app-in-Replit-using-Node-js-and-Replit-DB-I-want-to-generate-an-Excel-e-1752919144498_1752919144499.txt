@@ -1,0 +1,54 @@
+I am building an attendance app in Replit using Node.js and Replit DB. I want to generate an Excel export file in the exact structure shown below, using the `xlsx` package.
+
+📌 Expected Output: Timetable-wise Excel Format
+
+🗂 Excel File:
+- File name: Attendance_2ndPUC_Science_Jan2025.xlsx
+- One sheet per subject (e.g., Maths, Physics, Chemistry, English, etc.)
+- One final Summary sheet.
+
+📝 Each Subject Sheet Format (like “Mathematics”):
+- Columns:
+  - Student Name
+  - Roll No
+  - All relevant [Day-Date-Period] headers (e.g., "Mon-02 P1", "Mon-02 P4", "Tue-03 P2")
+  - Total Present
+  - Total Classes
+  - % (attendance percentage)
+- Rows:
+  - Each student
+  - Attendance marked as “P” (present), “A” (absent), “-” (no class that period)
+
+🧾 Summary Sheet Format:
+- Columns:
+  - Student Name
+  - Roll No
+  - One column for each subject with % attendance
+  - Overall % (average of subject %)
+  - Status (Excellent, Good, Below Avg based on thresholds)
+
+📚 My DB Structure:
+- Students: List of students with name and roll number
+- Attendance: attendance[roll][date][period] = "P" / "A"
+- Timetable: timetable[date][period] = subjectCode
+- Subject Map: subjectCode → subjectName
+
+🔁 Logic:
+- For each subject:
+  - Find all [date, period] slots where that subject was scheduled (from the timetable)
+  - Check each student’s attendance for those slots
+  - Count total conducted classes and number of “P” per student
+  - Calculate subject-wise % for each student
+- Summary:
+  - Combine % from all subject sheets
+  - Compute overall average %
+  - Set status:
+    - Excellent: ≥90%
+    - Good: 75%–89%
+    - Below Avg: <75%
+
+📦 Use `xlsx` npm package to create this Excel file with proper sheet names and formatting.
+
+✅ Export function should be triggered on a button click in my app and save the file as a downloadable Excel (.xlsx).
+
+🛑 DO NOT dump raw period data or student-wise full attendance — only organize into the exact timetable-wise per-subject format like the example shown.

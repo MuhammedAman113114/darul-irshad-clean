@@ -1,0 +1,98 @@
+📌 Feature: Leave Auto-Sync with Attendance, Namaz & Exports
+
+🎯 Problem:
+When a student applies for leave:
+- It doesn’t instantly reflect in Attendance if attendance is already partially taken.
+- Namaz tracking ignores leave status completely.
+- Leave data is missing from Excel exports.
+
+🛠️ Solution Plan:
+
+1. 🧩 Shared Utility Logic
+- Create a reusable function `isOnLeave(studentId, date, leaveData)`
+- This function checks if the given student has an active leave on the selected date.
+
+```js
+function isOnLeave(studentId, date, leaveRecords) {
+  return leaveRecords.some(record => {
+    const from = new Date(record.fromDate);
+    const to = new Date(record.toDate);
+    const current = new Date(date);
+    return record.studentId === studentId && current >= from && current <= to;
+  });
+}
+✅ Attendance UI
+
+Before rendering students, fetch all active leaves for the day.
+
+Run isOnLeave() for each student and if true:
+
+Show 🟡 “On Leave” badge.
+
+Disable attendance toggle for that period.
+
+If leave is applied mid-day, update upcoming periods automatically.
+
+🕌 Namaz Tracking UI
+
+Before rendering namaz list, load leave records for today.
+
+Run isOnLeave() and:
+
+Show “On Leave” banner like attendance.
+
+Disable prayer marking for that student.
+
+📤 Excel Export
+
+While generating the Excel:
+
+If student was on leave, set "L" or "On Leave" in the cell.
+
+Apply yellow background to leave-marked cells.
+
+Sync both Attendance + Namaz exports to show accurate leave info.
+
+🚫 Leave Conflict Prevention
+
+Before adding new leave:
+
+js
+Copy
+Edit
+function isDuplicateLeave(studentId, from, to, existing) {
+  return existing.some(leave => {
+    const lf = new Date(leave.fromDate), lt = new Date(leave.toDate);
+    const nf = new Date(from), nt = new Date(to);
+    return leave.studentId === studentId && (
+      (nf <= lt && nf >= lf) || (nt <= lt && nt >= lf) || (nf <= lf && nt >= lt)
+    );
+  });
+}
+If conflict, show: ❗“Leave already applied for this date range.”
+
+🔁 Sync Feedback
+
+When leave is applied, show toast:
+
+js
+Copy
+Edit
+✅ Leave reflected in attendance and namaz tracking.
+🧪 Test Scenarios:
+
+Apply leave for today → Refresh attendance → "On Leave" badge should show.
+
+Apply leave after 1st period taken → 2nd/3rd auto-marked "On Leave".
+
+Namaz screen shows same banner & disables toggles.
+
+Export shows “L” or “Leave” cells for that student.
+
+📦 Final Result:
+
+All modules reflect leave in real-time.
+
+No more manual marking errors.
+
+Export files are accurate for record-keeping.

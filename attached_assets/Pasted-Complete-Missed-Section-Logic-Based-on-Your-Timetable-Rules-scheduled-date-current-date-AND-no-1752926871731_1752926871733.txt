@@ -1,0 +1,80 @@
+Complete Missed Section Logic (Based on Your Timetable)
+Rules:
+
+scheduled_date < current_date AND no_attendance_taken = MISSED
+If period shows "-" = IGNORE (don't consider for missed section)
+If day is "HOLIDAY" = IGNORE (don't consider for missed section)
+Only actual scheduled subjects (AP1, TJD1, FQH1, etc.) should be checked
+
+Updated Implementation:
+sqlSELECT 
+    t.class_id,
+    t.subject_id,
+    t.teacher_id,
+    t.period,
+    t.day_of_week,
+    t.scheduled_date as missed_date,
+    t.start_time,
+    t.end_time,
+    t.subject_code,  -- AP1, TJD1, FQH1, etc.
+    c.class_name,
+    s.subject_name,
+    te.teacher_name
+FROM timetable t
+LEFT JOIN attendance_records a ON (
+    t.class_id = a.class_id 
+    AND t.subject_id = a.subject_id
+    AND DATE(a.attendance_date) = t.scheduled_date
+    AND a.period = t.period
+)
+LEFT JOIN classes c ON t.class_id = c.id
+LEFT JOIN subjects s ON t.subject_id = s.id  
+LEFT JOIN teachers te ON t.teacher_id = te.id
+LEFT JOIN holidays h ON t.scheduled_date = h.holiday_date
+WHERE a.id IS NULL  -- No attendance taken
+AND t.scheduled_date < CURRENT_DATE()  -- Only previous days
+AND t.subject_code != '-'  -- Exclude periods with "-"
+AND t.subject_code IS NOT NULL  -- Exclude null periods
+AND h.holiday_date IS NULL  -- Exclude holidays
+AND t.day_of_week NOT IN ('Friday')  -- Exclude Friday if it's marked as holiday
+ORDER BY t.scheduled_date DESC, t.period
+Example Based on Your Timetable:
+Wednesday Classes:
+
+P1: AP1 - Attendance taken ✓
+P2: TJD1 - NO attendance taken ❌
+P3: FQH1 - Attendance taken ✓
+P4: AP1 - NO attendance taken ❌
+
+Thursday Classes:
+
+P1: "-" - IGNORED ✓
+P2: "-" - IGNORED ✓
+P3: "-" - IGNORED ✓
+P4: "-" - IGNORED ✓
+
+Friday Classes:
+
+All periods marked "HOLIDAY" - IGNORED ✓
+
+Saturday Classes:
+
+P1: AP1 - NO attendance taken ❌
+P2: TJD1 - Attendance taken ✓
+P3: FQH1 - NO attendance taken ❌
+P4: "-" - IGNORED ✓
+
+Next Day (Sunday) - Missed Section Shows:
+
+❌ Wednesday P2: TJD1 (missed)
+❌ Wednesday P4: AP1 (missed)
+❌ Saturday P1: AP1 (missed)
+❌ Saturday P3: FQH1 (missed)
+
+NOT in Missed Section:
+
+✅ Thursday periods (all "-")
+✅ Friday periods (holiday)
+✅ Any period with "-"
+
+This logic perfectly matches your timetable structure!

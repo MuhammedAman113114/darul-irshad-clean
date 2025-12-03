@@ -1,0 +1,74 @@
+🟦 REPLIT-STYLED PROMPT — HOLIDAY SYSTEM INTEGRATION
+
+📌 FEATURE NAME: Smart Holiday Scheduling System
+
+GOAL:
+Enable Admin to:
+	•	Schedule fixed/future holidays (academic & emergency),
+	•	Exclude attendance & namaz tracking on holidays,
+	•	Sync holidays to all modules (attendance UI, sheets, tracking),
+	•	Provide undo/remove option even on the same day,
+	•	Ensure missed section doesn’t show missed status on holidays.
+
+––––––––––––––––––––––––––––––––––––––––
+
+🧩 FRONTEND PROMPT (React + Tailwind UI)
+
+Feature: Academic Calendar View
+
+Components:
+	1.	📅 Calendar Component
+	•	Datepicker with future dates enabled
+	•	Color indicators:
+	•	Blue = Academic Holiday
+	•	Red = Emergency Holiday
+	•	Grey = Already Declared Holiday (non-editable)
+	2.	✍ Declare Holiday Panel
+	•	Selected Date: shows day name
+	•	Holiday Name (input)
+	•	Type: Toggle (Academic / Emergency)
+	•	Affected Courses: Multi-checkbox (PUC, Post-PUC, etc)
+	•	Button: Declare Academic Holiday
+	3.	🔁 Undo Holiday Button (if holiday exists for selected date)
+	4.	📜 Scheduled Holidays Table (Below Calendar)
+	•	Date | Type | Name | Courses | Actions (Edit / Remove)
+	5.	🛑 On Holiday:
+	•	Attendance & Namaz modules show 🔒 “Holiday Declared – Attendance Disabled”
+	•	Namaz: “No tracking today due to holiday”
+
+––––––––––––––––––––––––––––––––––––––––
+
+🧠 BACKEND DATABASE STRUCTURE (Firebase Firestore)
+
+Collection: holidays
+Each Document (id: holiday_yyyy-mm-dd)
+
+{
+date: “2025-07-07”,
+type: “academic” | “emergency”,
+name: “Sunday”,
+affectedCourses: [“PUC”, “Post-PUC”],
+createdBy: userId,
+createdAt: timestamp,
+isDeleted: false
+}
+
+⚙ On undo: update isDeleted: true
+
+💡 Optimization: Index holidays by date for faster lookup.
+
+––––––––––––––––––––––––––––––––––––––––
+
+🔄 SYNC LOGIC ACROSS APP
+	1.	On App Load / Daily Refresh
+	•	Fetch holidays where date == today AND isDeleted == false
+	•	If found:
+	•	Block attendance button for relevant course/section
+	•	Auto-mark day as “Holiday” in attendance DB
+	2.	Missed Attendance
+	•	Exclude from missed section if holiday found for that course
+	3.	Export Sheet Logic
+	•	Show “Holiday” label (grey background) in period cell
+	•	Do not count in total % present or % absent
+	4.	Namaz Tracker
+	•	Same logic: if holiday, disable prayer tracking

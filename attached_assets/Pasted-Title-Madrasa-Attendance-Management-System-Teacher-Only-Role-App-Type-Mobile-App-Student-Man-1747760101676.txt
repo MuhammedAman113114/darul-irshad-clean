@@ -1,0 +1,155 @@
+Title: Madrasa Attendance Management System (Teacher-Only Role)
+
+App Type: Mobile App (Student Management for Madrasa)
+
+User Role: Teacher only (no Admin)
+
+====================================================
+🧠 Core Modules:
+- Attendance (with Take, Settings, History)
+- Namaz
+- Leave
+- Remarks
+- Results
+- Calendar
+- Class Management
+====================================================
+
+🎯 Feature Focus: Attendance Management
+
+--- 1️⃣ ATTENDANCE FLOW (LOGIC) ---
+
+1. User taps “Attendance” in NavBar
+   → Submenu:
+     - Take Attendance
+     - Attendance Settings
+     - Attendance History
+
+2. TAKE ATTENDANCE:
+   a. Select Date (📅)
+   b. Select Year → Course → Section (if PU Commerce)
+   c. Select Attendance Type: Lecture | Note
+   d. Select Period (Auto based on Year level)
+      - PUC: 3 Periods fixed (editable)
+      - 3rd–5th: 6 Periods (editable)
+      - 6th–7th: 8 Periods (editable)
+   e. Enter Subject Name + Time for each Period
+   f. Toggle Active / Inactive
+      - If Inactive → Hide student list + show message
+      - If Active → Load student list
+
+   g. For each student:
+      - Show name + roll no
+      - Mark: ✅ Present | ❌ Absent | 🟡 Leave
+        > Default to ❌ Absent if untouched
+        > If student on leave → auto 🟡 Leave tag
+   h. Show Present / Absent / Leave counters (live update)
+   i. [💾 Save Attendance] → Save data with timestamp, period, student ID
+   j. Attendance auto-saved locally (offline mode) → synced later
+
+3. ATTENDANCE SETTINGS:
+   a. Select Year Level
+   b. View/Edit Period Names & Time
+   c. Add / Remove Periods
+      - PUC: Up to 3
+      - 3rd–5th: Up to 6
+      - 6th–7th: Up to 8
+   d. Toggle settings:
+      - ✅ Auto-mark Absent if untouched
+      - ✅ Show Leave tags
+      - ✅ Require subject name per period
+      - ✅ Save draft offline
+   e. Idle Period handling:
+      > If no attendance taken for a period, log it as "Idle"
+      > View idle list under History
+      > Reopen attendance later and mark manually
+
+4. ATTENDANCE HISTORY:
+   a. Filter by Date, Class, Section, or Student
+   b. View attendance per period
+   c. Option to Edit / Overwrite if allowed
+   d. Show colored tags: ✅ ❌ 🟡
+   e. Searchable student records
+
+====================================================
+🎨 UI/UX DESIGN
+
+— NAVIGATION —
+☑️ Side NavBar:
+- Attendance ▶️
+  - Take Attendance
+  - Attendance Settings
+  - Attendance History
+- Namaz
+- Leave
+- Remarks
+- Results
+- Calendar
+- Class Management
+
+— TAKE ATTENDANCE SCREEN —
+📆 Top Navigation:
+- Back Button
+- Date Picker
+- Attendance Type (Lecture / Note)
+- Active / Inactive Toggle
+
+📚 Class Info:
+- Year Dropdown
+- Course Dropdown (Commerce/Science)
+- Section Selector (for PU Commerce only)
+
+⏰ Period Info:
+- Show Period Cards (1 to N based on year)
+- Each Period:
+  - 🕘 Time
+  - 📝 Subject Name
+  - Attendance Chips: ✅ ❌ 🟡
+  - ➕ Add / ❌ Remove Period (where allowed)
+
+👥 Student List:
+- Name + Roll No
+- Toggle Buttons (Default ❌)
+- 🟡 Leave (auto-tag)
+- 🔍 Search bar
+
+📊 Summary Bar:
+- Present Count (Green)
+- Absent Count (Red)
+- Leave Count (Yellow)
+
+💾 Bottom Bar:
+- Save Attendance (Sticky CTA)
+- Clear All (Optional)
+
+— SETTINGS SCREEN —
+⚙️ Period Editor:
+- Select Year
+- View/Edit Periods
+- Add/Remove Period Buttons
+- Input: Name & Time for each period
+
+⚙️ Attendance Preferences:
+- Auto-mark Absent [toggle]
+- Subject Required [toggle]
+- Offline Save [toggle]
+- Show Leave Tag [toggle]
+
+📋 Idle Period Handling:
+- List periods with no attendance
+- Reopen for later marking
+
+— HISTORY SCREEN —
+🗓️ Filter: Date / Year / Course / Section / Student
+📄 Display Periods with:
+- ✅ ❌ 🟡 Status
+- Time
+- Subject
+🖊️ Edit Option (optional with confirmation)
+
+====================================================
+🧩 SYSTEM NOTES
+- All records saved to localStorage
+- Sync to backend when online
+- Prevent overwrite unless confirmed
+- Show real-time status counts

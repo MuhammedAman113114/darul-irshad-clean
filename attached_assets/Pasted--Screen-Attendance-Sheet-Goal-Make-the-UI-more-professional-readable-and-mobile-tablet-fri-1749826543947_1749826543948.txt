@@ -1,0 +1,70 @@
+📐 Screen: Attendance Sheet
+🎯 Goal: Make the UI more professional, readable, and mobile/tablet friendly
+
+🔁 REPLIT UI/UX IMPROVEMENT PROMPT
+
+🧼 General Improvements:
+- Reduce horizontal scroll: Group days under week headers (Week 1, Week 2...)
+- Fix row height and cell alignment
+- Add vertical and horizontal scrollbars with clear visibility
+- Freeze header row + student name column on scroll
+
+🔎 Top Filter Bar (Redesign):
+| [Month & Year 📅] | [Period ⬇️] | [Search Student 🔍] | [Export Excel ⬇️] |
+- Use responsive 2-column layout for mobile view
+- Add a subtle card background and padding to the filter section
+
+📊 Table Redesign:
+- Row 1 (Header):
+  Week 1      | Week 2      | ...
+  Sun | Mon | Tue | ... (inside each week)
+
+- Columns:
+  | # | Student Name | Week 1 | Week 2 | Week 3 | ... | Total Summary |
+  - Inside each week: 7 small day-cells with compact status icons
+
+📌 Cell Marking (Icons/Colors):
+- ✅ Present: Green dot/icon
+- ❌ Absent: Red X
+- 🚫 Leave: Yellow dot
+- 🛑 Holiday: Gray slash
+- Empty: Dash “–” (for non-marked days)
+
+🧾 Row Design:
+- Student Name: Bold
+- Roll No: small subtitle below name
+- Total Summary: Show total P / A / L as chips at row-end
+
+📥 Export Button:
+- Style as prominent button
+- Dropdown next to it with options:
+  • Export Current View
+  • Export Full Month
+  • Export by Period
+
+📱 Responsive Behavior:
+- On mobile:
+  → Student rows become vertical cards
+  → Each week collapses into a horizontal scroll inside the card
+  → Export button moves to bottom fixed bar
+
+🧩 Sync Logic (Do NOT remove):
+- Data comes from “Take Attendance” tab
+- Save to Firebase + localStorage
+- Sync on reconnect
+- Show loading spinner if sync in progress
+
+🧠 Optional Enhancements:
+- Hover/click on any cell shows:
+  "Present | 9:00–10:00 | Taken by: Teacher X"
+- Tap to open modal for per-day breakdown
+
+📚 Legend Redesign:
+- Use color-coded chips with icons
+- Place it fixed at bottom-right corner with expand/collapse option
+
+✅ RESULT:
+- Full-month calendar-style table, responsive and readable
+- Quick export, synced data
+- No feature regression from previous version
+- Fits seamlessly into current design system

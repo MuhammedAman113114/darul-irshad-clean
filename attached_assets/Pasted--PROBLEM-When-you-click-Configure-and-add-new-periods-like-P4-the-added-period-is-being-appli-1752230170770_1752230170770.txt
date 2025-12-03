@@ -1,0 +1,101 @@
+✅ PROBLEM:
+When you click "Configure" and add new periods (like P4), the added period is being applied globally across all classes, including Post PUC etc.
+
+But each course + year + stream + section (i.e., one specific class) should have its own independent timetable.
+
+✅ SOLUTION (Replit Styled - JSON/React Prompt):
+You need to store the timetable data for each unique class, and make sure all period operations (add/delete/edit) are scoped only to that selected class.
+
+🔧 Suggested Replit DB Structure (JSON format):
+js
+Copy
+Edit
+// 🔄 Key per class combination
+{
+  "timetable:PUC-1stYear-Commerce-A": {
+    "periods": [
+      {
+        "periodId": "P1",
+        "startTime": "09:00 AM",
+        "endTime": "10:00 AM",
+        "subjects": {
+          "Monday": "AQD",
+          "Tuesday": "-",
+          "Wednesday": "-",
+          "Thursday": "-",
+          "Friday": "HOLIDAY",
+          "Saturday": "-",
+          "Sunday": "-"
+        }
+      },
+      {
+        "periodId": "P2",
+        "startTime": "10:00 AM",
+        "endTime": "11:00 AM",
+        "subjects": { ... }
+      },
+      ...
+    ]
+  },
+
+  "timetable:PostPUC-6thYear-Arts-A": {
+    "periods": [
+      {
+        "periodId": "P1",
+        "startTime": "09:00 AM",
+        "endTime": "10:00 AM",
+        "subjects": {
+          "Monday": "Hadith",
+          ...
+        }
+      }
+    ]
+  }
+}
+💡 UI Logic (React Prompt Style):
+jsx
+Copy
+Edit
+// On Save
+const saveTimetable = () => {
+  const classKey = `timetable:${course}-${year}-${stream}-${section}`;
+  replitDB.set(classKey, timetableData);
+};
+
+// On Load
+useEffect(() => {
+  const classKey = `timetable:${course}-${year}-${stream}-${section}`;
+  replitDB.get(classKey).then(data => {
+    if (data) setTimetable(data);
+    else setTimetable(defaultPeriods); // use default 3-period setup
+  });
+});
+➕ Placement of "Add Period" Button:
+jsx
+Copy
+Edit
+<Button 
+  icon={<Plus />} 
+  className="ml-2 bg-blue-600 text-white rounded px-3 py-1"
+  onClick={() => addNewPeriod()}
+>
+  Add Period
+</Button>
+Place this next to the Edit button — but only within the selected class context.
+
+✅ Sync with Attendance:
+Every time a period is added to the timetable, automatically update the attendance UI to reflect this class-specific structure by fetching the correct class timetable key.
+
+js
+Copy
+Edit
+const attendancePeriods = replitDB.get(`timetable:${course}-${year}-${stream}-${section}`).periods;
+🔒 Tip:
+Always use a unique key per class like:
+
+makefile
+Copy
+Edit
+timetable:PUC-1stYear-Commerce-A
+timetable:PUC-2ndYear-Commerce-A
+timetable:PostPUC-3rdYear-Hifz-B

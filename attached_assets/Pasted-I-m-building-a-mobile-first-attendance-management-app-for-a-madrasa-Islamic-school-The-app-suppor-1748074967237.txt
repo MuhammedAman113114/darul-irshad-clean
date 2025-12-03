@@ -1,0 +1,31 @@
+I'm building a mobile-first attendance management app for a madrasa (Islamic school). The app supports dynamic course/year/section handling (PUC: 1st–2nd year with sections, Post-PUC: 3rd–7th year without sections), period-wise attendance, local storage, offline support, and syncing when online.
+
+Now I want to polish the UX, increase teacher usability, and make the interface more reliable and user-friendly. Add these features in the attendance section, optimized for mobile touch UI:
+
+1. ✅ "Copy Previous Attendance" — A button or dropdown to auto-fill attendance based on the most recent record for the same class, section, and period. Should load values into the current form for editing before saving.
+
+2. 🔄 Sync Status Indicator — Show a syncing status icon near the Save button or top bar:
+   - 🔄 = syncing in progress
+   - ✅ = synced successfully
+   - ❌ = sync failed or offline
+   Use real-time detection of connection status and local storage save state.
+
+3. ❗ Unsaved Attendance Warning — If attendance was marked but not saved (due to crash or logout), show a badge/icon on the class tile or alert during next login/session.
+
+4. 🧑‍🦯 Accessibility — Adjust red/green border contrast on student cards for color-blind friendliness. Use shapes/icons or text ("P", "A") along with color indicators.
+
+5. 🛑 Confirmation Modal on Save — After tapping Save, show a modal summarizing:
+   - Total students
+   - Present count
+   - Absent count
+   - (Optional) On leave
+   Allow user to Confirm or Cancel before final submission.
+
+6. 👤 Show Student Photos — Display a small circular photo/avatar next to each student's name in the attendance list. Falls back to initials if photo not available.
+
+7. 🎉 Success Animation — On successful save, show a lightweight Lottie animation (like a checkmark burst) or play a soft "ping" sound. Keep it non-intrusive but delightful.
+
+Tech: This is a mobile app. Use React Native (with TypeScript) and store data in localStorage (AsyncStorage). Ensure offline-first behavior. Sync to server happens in background when online. Code should be clean, modular, and follow good component practices.
+
+Generate reusable UI components where possible. Use context-aware state handling (e.g. useContext or Zustand). Add comments for logic blocks. Mobile UX is top priority: touch-friendly, fast feedback, accessible.
+

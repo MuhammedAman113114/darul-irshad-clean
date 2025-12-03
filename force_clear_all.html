@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Force Clear All Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        button { padding: 10px 20px; margin: 5px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #c82333; }
+        .list { max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h2>🗑️ Force Clear All Application Data</h2>
+    <p>This will completely clear ALL localStorage data for a fresh start.</p>
+    
+    <button onclick="clearEverything()">CLEAR ALL DATA</button>
+    <button onclick="clearSpecificAttendance()">CLEAR ONLY ATTENDANCE</button>
+    
+    <div id="result"></div>
+
+    <script>
+        function clearEverything() {
+            const beforeCount = localStorage.length;
+            const allKeys = [];
+            
+            // Get all keys first
+            for (let i = 0; i < localStorage.length; i++) {
+                allKeys.push(localStorage.key(i));
+            }
+            
+            // Clear everything
+            localStorage.clear();
+            
+            document.getElementById('result').innerHTML = `
+                <div class="result success">
+                    <h3>✅ COMPLETE CLEAR SUCCESSFUL</h3>
+                    <p><strong>${beforeCount} total keys removed</strong></p>
+                    <div class="list">
+                        <h4>Removed Keys:</h4>
+                        ${allKeys.map(key => `<div>• ${key}</div>`).join('')}
+                    </div>
+                    <p style="color: red; font-weight: bold;">🔄 REFRESH YOUR MAIN APP NOW - ALL DATA CLEARED!</p>
+                </div>
+            `;
+        }
+
+        function clearSpecificAttendance() {
+            const allKeys = Object.keys(localStorage);
+            const removedKeys = [];
+            
+            // Target specific attendance patterns
+            const patterns = [
+                /^attendance_/,
+                /attendance/i,
+                /history/i,
+                /period/i,
+                /students/i,
+                /madrasa/i,
+                /_data$/,
+                /cache/i,
+                /records/i
+            ];
+            
+            allKeys.forEach(key => {
+                const shouldRemove = patterns.some(pattern => pattern.test(key));
+                if (shouldRemove) {
+                    localStorage.removeItem(key);
+                    removedKeys.push(key);
+                }
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div class="result success">
+                    <h3>✅ ATTENDANCE DATA CLEARED</h3>
+                    <p><strong>${removedKeys.length} keys removed</strong></p>
+                    <div class="list">
+                        ${removedKeys.map(key => `<div>• ${key}</div>`).join('')}
+                    </div>
+                    <p style="color: blue; font-weight: bold;">🔄 REFRESH YOUR MAIN APP NOW!</p>
+                </div>
+            `;
+        }
+
+        // Auto-clear everything on page load
+        window.onload = function() {
+            setTimeout(() => {
+                clearEverything();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

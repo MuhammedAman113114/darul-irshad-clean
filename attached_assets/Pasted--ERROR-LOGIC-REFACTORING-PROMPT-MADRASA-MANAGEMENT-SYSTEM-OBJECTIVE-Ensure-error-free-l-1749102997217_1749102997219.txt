@@ -1,0 +1,151 @@
+🛠️ ERROR LOGIC REFACTORING PROMPT – MADRASA MANAGEMENT SYSTEM
+
+📌 OBJECTIVE:
+Ensure error-free logic, remove race conditions, and establish tight validation between interconnected modules:
+(Student Management, Attendance, Leave, Namaz, Profile, Notification, Holidays, Periods)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔁 MODULE-WISE ERROR FIXES & VALIDATION FLOW
+
+📍1. Attendance ↔ Leave Sync Fix
+- [ ] ✅ Before marking attendance, fetch latest leave data
+- [ ] ⚠️ If attendance already exists and leave is later approved, auto-update attendance status to `on-leave`
+```js
+if (isLeaveApprovedAfterAttendance(studentId, date)) {
+   updateAttendanceStatus(studentId, date, 'on-leave');
+}
+📍2. Attendance Overwrite Warning
+
+ 🛑 Prevent silent overwrites
+
+ ✅ If attendance exists → Show confirmation prompt
+
+js
+Copy
+Edit
+if (attendanceExists(params)) {
+  confirm("Overwrite existing attendance?");
+}
+📍3. Section Deletion Safety
+
+ ⚠️ Prevent section delete if students are assigned
+
+ ✅ Archive or reassign students before deletion
+
+js
+Copy
+Edit
+if (hasStudentsInSection(sectionId)) {
+  alert("Move or archive students before deleting this section.");
+}
+📍4. Namaz vs Class Status Isolation
+
+ ❌ Don’t use same status field for both
+
+ ✅ Use namazStatus separately in namaz_attendance table
+
+js
+Copy
+Edit
+// Correct separation
+attendance.status = 'present';
+namazAttendance.status = 'prayed';
+📍5. Leave-Attendance Backdate Sync
+
+ ✅ After leave approval, run sync scan:
+
+js
+Copy
+Edit
+scanAndUpdatePastAttendance(studentId, leave.fromDate, leave.toDate);
+📍6. Notification Auto Update
+
+ ✅ When:
+
+Leave expires
+
+Attendance is marked
+
+Date changes
+Trigger:
+
+js
+Copy
+Edit
+updateNotificationCounts();
+refreshBellIcon();
+📍7. Real-Time Sync Protection
+
+ 🛑 Prevent write conflicts across multiple users
+
+ ✅ Use Firestore transactions or batch commits
+
+js
+Copy
+Edit
+runTransaction((t) => {
+  const ref = doc(db, "attendance", attendanceId);
+  t.update(ref, { status: 'present' });
+});
+📍8. Holiday Validation for Namaz (Optional)
+
+ ⚠️ If madrasa closed on holiday, block namaz marking
+
+js
+Copy
+Edit
+if (checkHolidayStatus(date).blocksAttendance) return;
+📍9. Central Validation Chain Before Attendance Save
+
+ ✅ Create preAttendanceChecks() to run:
+
+Class validation
+
+Student enrollment
+
+Leave status
+
+Holiday check
+
+Previous attendance
+
+js
+Copy
+Edit
+const result = await preAttendanceChecks(params);
+if (!result.valid) return showError(result.reason);
+📍10. Action Audit Trail
+
+ ✅ Track who did what, when
+
+js
+Copy
+Edit
+attendance.markedBy = currentUser.id;
+attendance.markedAt = new Date().toISOString();
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔗 FINAL CHECKLIST:
+
+ All modules have input validation
+
+ Leave-attendance sync is bi-directional
+
+ Deletions do not orphan related data
+
+ Offline sync handles delayed writes
+
+ All UI actions have backend fallback checks
+
+🧠 Tip: Centralize logic into service functions like validateAttendanceOperation() and reuse them.
+
+✅ After implementing, test:
+
+Mark attendance → Approve leave → Check auto-correction
+
+Approve backdated leave → Recheck attendance
+
+Delete section with students → Confirm block or reassignment
+
+Dual teacher marking → Test for race conditions

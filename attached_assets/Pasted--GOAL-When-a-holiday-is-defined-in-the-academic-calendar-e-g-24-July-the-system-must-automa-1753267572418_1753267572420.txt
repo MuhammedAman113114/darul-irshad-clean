@@ -1,0 +1,72 @@
+🎯 GOAL:
+When a holiday is defined in the academic calendar (e.g., 24 July), the system must automatically:
+- Display `H` (Holiday) in the in-app attendance sheet on that date.
+- Insert `H` in each corresponding period column in the Excel export, only if the period is present in the timetable for that class on that day.
+
+📘 DATA STRUCTURE:
+
+📁 academic_calendar
+{
+  date: "2025-07-24",
+  title: "Ashura",
+  type: "holiday", // or "emergency"
+  appliesTo: "pu" // or "post_pu" or "all"
+}
+
+📁 timetable
+{
+  courseType: "pu",
+  year: "2",
+  stream: "science",
+  section: "A",
+  dayOfWeek: "thursday",
+  periodNumber: 1,
+  subjectId: 10,
+  startTime: "09:00",
+  endTime: "10:00"
+}
+
+📁 attendance_sheet (per student)
+{
+  studentId: "st101",
+  date: "2025-07-24",
+  courseType: "pu",
+  section: "A",
+  period: 1,
+  status: "H" // set automatically based on academic calendar
+}
+
+📁 excel_column_headers (generated dynamically per subject sheet)
+[
+  "Student Name", "Roll No",
+  "Thu-24 P1", "Thu-24 P2", "Thu-24 P3", ...,
+  "Total Present", "Total Classes", "Subject %"
+]
+
+📁 excel_cell_values (generated dynamically)
+For 24 July (Thu), if 3 periods exist in timetable:
+[
+  "Ahmed Ali", "101", "H", "H", "H", ..., 0, 0, "0%"
+]
+
+🛠️ LOGIC IMPLEMENTATION:
+
+1. 🔍 On attendance load OR export:
+   → Check if `academic_calendar` contains the current date as holiday.
+   → If yes, fetch timetable for that class on the same day of the week.
+   → For each period in timetable, insert attendance status as `H`.
+
+2. 📤 In Excel Generation:
+   → During column generation, format as: `Day-Date P1`, `Day-Date P2`, etc.
+   → If the date is a holiday, automatically assign `H` in all matching cells.
+
+3. 💡 Special Cases:
+   - If `appliesTo = pu`, only apply `H` to PUC timetable/attendance.
+   - If timetable has no class on holiday, don't generate columns.
+
+✅ OUTPUT BEHAVIOR:
+
+📅 Attendance Sheet UI (for 24 July):
+"Thu-24 P1" → H  
+"Thu-24 P2" → H  
+"Thu-24 P3" → H  

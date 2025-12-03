@@ -1,0 +1,513 @@
+import { 
+  users, students, attendance, namazAttendance, leaves, results, remarks, subjects, timetable, holidays,
+  type User, type Student, type Attendance, type NamazAttendance, type Leave, type Result, type Remark, type Subject, type Timetable, type Holiday,
+  type InsertUser, type InsertStudent, type InsertAttendance, type InsertNamazAttendance, type InsertLeave, type InsertResult, type InsertRemark, type InsertSubject, type InsertTimetable, type InsertHoliday
+} from "@shared/schema";
+
+// Import DatabaseStorage
+import { DatabaseStorage } from './database-storage';
+
+export interface IStorage {
+  // Users
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  
+  // Students
+  getStudents(): Promise<Student[]>;
+  getStudent(id: number): Promise<Student | undefined>;
+  getStudentsByFilter(filters: Partial<Student>): Promise<Student[]>;
+  createStudent(student: InsertStudent): Promise<Student>;
+  updateStudent(id: number, student: Partial<Student>): Promise<Student | undefined>;
+  deleteStudent(id: number): Promise<boolean>;
+  
+  // Attendance
+  getAttendance(id: number): Promise<Attendance | undefined>;
+  getAttendanceByFilter(filters: Partial<Attendance>): Promise<Attendance[]>;
+  createAttendance(attendance: InsertAttendance): Promise<Attendance>;
+  updateAttendance(id: number, attendance: Partial<Attendance>): Promise<Attendance | undefined>;
+  deleteAttendance(id: number): Promise<boolean>;
+  
+  // Namaz Attendance
+  getNamazAttendance(id: number): Promise<NamazAttendance | undefined>;
+  getNamazAttendanceByFilter(filters: Partial<NamazAttendance>): Promise<NamazAttendance[]>;
+  createNamazAttendance(namazAttendance: InsertNamazAttendance): Promise<NamazAttendance>;
+  updateNamazAttendance(id: number, namazAttendance: Partial<NamazAttendance>): Promise<NamazAttendance | undefined>;
+  deleteNamazAttendance(id: number): Promise<boolean>;
+  
+  // Leaves
+  getLeave(id: number): Promise<Leave | undefined>;
+  getLeaveByFilter(filters: Partial<Leave>): Promise<Leave[]>;
+  createLeave(leave: InsertLeave): Promise<Leave>;
+  updateLeave(id: number, leave: Partial<Leave>): Promise<Leave | undefined>;
+  deleteLeave(id: number): Promise<boolean>;
+  
+  // Results
+  getResult(id: number): Promise<Result | undefined>;
+  getResultByFilter(filters: Partial<Result>): Promise<Result[]>;
+  createResult(result: InsertResult): Promise<Result>;
+  updateResult(id: number, result: Partial<Result>): Promise<Result | undefined>;
+  deleteResult(id: number): Promise<boolean>;
+  
+  // Remarks
+  getRemark(id: number): Promise<Remark | undefined>;
+  getRemarkByFilter(filters: Partial<Remark>): Promise<Remark[]>;
+  createRemark(remark: InsertRemark): Promise<Remark>;
+  updateRemark(id: number, remark: Partial<Remark>): Promise<Remark | undefined>;
+  deleteRemark(id: number): Promise<boolean>;
+  
+  // Subjects
+  getSubjects(filters?: Partial<Subject>): Promise<Subject[]>;
+  createSubject(subject: InsertSubject): Promise<Subject>;
+  updateSubject(id: number, subject: Partial<Subject>): Promise<Subject | undefined>;
+  deleteSubject(id: number): Promise<boolean>;
+
+  // Timetable
+  getTimetable(filters?: Partial<Timetable>): Promise<Timetable[]>;
+  getTimetableEntry(filters: { courseType: string; year: string; stream?: string; section: string; dayOfWeek: string; periodNumber: number }): Promise<Timetable | undefined>;
+  createTimetableEntry(entry: InsertTimetable): Promise<Timetable>;
+  updateTimetableEntry(id: number, entry: Partial<Timetable>): Promise<Timetable | undefined>;
+  deleteTimetableEntry(id: number): Promise<boolean>;
+  bulkCreateTimetable(entries: InsertTimetable[]): Promise<Timetable[]>;
+
+
+  
+  // Holidays
+  getHoliday(id: number): Promise<Holiday | undefined>;
+  getHolidayByFilter(filters: Partial<Holiday>): Promise<Holiday[]>;
+  createHoliday(holiday: InsertHoliday): Promise<Holiday>;
+  updateHoliday(id: number, holiday: Partial<Holiday>): Promise<Holiday | undefined>;
+  deleteHoliday(id: number): Promise<boolean>;
+}
+
+export class MemStorage implements IStorage {
+  private users: Map<number, User>;
+  private students: Map<number, Student>;
+  private attendanceRecords: Map<number, Attendance>;
+  private namazAttendanceRecords: Map<number, NamazAttendance>;
+  private leaveRecords: Map<number, Leave>;
+  private resultRecords: Map<number, Result>;
+  private remarkRecords: Map<number, Remark>;
+
+  private holidayRecords: Map<number, Holiday>;
+
+  private userCurrentId: number;
+  private studentCurrentId: number;
+  private attendanceCurrentId: number;
+  private namazAttendanceCurrentId: number;
+  private leaveCurrentId: number;
+  private resultCurrentId: number;
+  private remarkCurrentId: number;
+
+  private holidayCurrentId: number;
+
+  constructor() {
+    this.users = new Map();
+    this.students = new Map();
+    this.attendanceRecords = new Map();
+    this.namazAttendanceRecords = new Map();
+    this.leaveRecords = new Map();
+    this.resultRecords = new Map();
+    this.remarkRecords = new Map();
+
+    this.holidayRecords = new Map();
+
+    this.userCurrentId = 1;
+    this.studentCurrentId = 1;
+    this.attendanceCurrentId = 1;
+    this.namazAttendanceCurrentId = 1;
+    this.leaveCurrentId = 1;
+    this.resultCurrentId = 1;
+    this.remarkCurrentId = 1;
+
+    this.holidayCurrentId = 1;
+
+    // Initialize with demo data
+    this.initializeDemoData();
+  }
+
+  private initializeDemoData() {
+    // Demo students
+    const demoStudents = [
+      {
+        id: 1,
+        name: "bathisha",
+        rollNo: "11",
+        courseType: "pu",
+        courseDivision: "commerce",
+        year: "1",
+        batch: "A",
+        dob: "2001-12-11",
+        fatherName: "qqqq",
+        motherName: "qqqq",
+        bloodGroup: "A+",
+        address: "SASASS",
+        createdAt: new Date()
+      },
+      {
+        id: 2,
+        name: "mohammed ",
+        rollNo: "12",
+        courseType: "pu",
+        courseDivision: "commerce",
+        year: "1",
+        batch: "A",
+        dob: "2001-02-25",
+        fatherName: "qq",
+        motherName: "vv",
+        bloodGroup: "A+",
+        address: "fwsfd@gmail.com",
+        createdAt: new Date()
+      }
+    ];
+
+    demoStudents.forEach(student => {
+      this.students.set(student.id, student as Student);
+    });
+    this.studentCurrentId = 3;
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    for (const [_, user] of this.users) {
+      if (user.username === username) {
+        return user;
+      }
+    }
+    return undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const id = this.userCurrentId++;
+    const now = new Date();
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      createdAt: now,
+      role: insertUser.role || "teacher"
+    };
+    this.users.set(id, user);
+    return user;
+  }
+
+  async getStudents(): Promise<Student[]> {
+    return Array.from(this.students.values());
+  }
+
+  async getStudent(id: number): Promise<Student | undefined> {
+    return this.students.get(id);
+  }
+
+  async getStudentsByFilter(filters: Partial<Student>): Promise<Student[]> {
+    const students = Array.from(this.students.values());
+    return students.filter(student => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (value === undefined) return true;
+        return student[key as keyof Student] === value;
+      });
+    });
+  }
+
+  async createStudent(insertStudent: InsertStudent): Promise<Student> {
+    const id = this.studentCurrentId++;
+    const now = new Date();
+    const student: Student = { 
+      ...insertStudent, 
+      id, 
+      createdAt: now,
+      courseDivision: insertStudent.courseDivision || null,
+      batch: insertStudent.batch || null,
+      bloodGroup: insertStudent.bloodGroup || null,
+      fatherName: insertStudent.fatherName || null,
+      motherName: insertStudent.motherName || null,
+      contact1: insertStudent.contact1 || null,
+      contact2: insertStudent.contact2 || null,
+      address: insertStudent.address || null,
+      photoUrl: insertStudent.photoUrl || null,
+      status: insertStudent.status || "active"
+    };
+    this.students.set(id, student);
+    return student;
+  }
+
+  async updateStudent(id: number, studentUpdate: Partial<Student>): Promise<Student | undefined> {
+    const student = this.students.get(id);
+    if (!student) return undefined;
+    
+    const updatedStudent = { ...student, ...studentUpdate };
+    this.students.set(id, updatedStudent);
+    return updatedStudent;
+  }
+
+  async deleteStudent(id: number): Promise<boolean> {
+    return this.students.delete(id);
+  }
+
+  async getAttendance(id: number): Promise<Attendance | undefined> {
+    return this.attendanceRecords.get(id);
+  }
+
+  async getAttendanceByFilter(filters: Partial<Attendance>): Promise<Attendance[]> {
+    const attendance = Array.from(this.attendanceRecords.values());
+    return attendance.filter(record => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (value === undefined) return true;
+        return record[key as keyof Attendance] === value;
+      });
+    });
+  }
+
+  async createAttendance(insertAttendance: InsertAttendance): Promise<Attendance> {
+    const id = this.attendanceCurrentId++;
+    const now = new Date();
+    const attendance: Attendance = { 
+      ...insertAttendance, 
+      id,
+      recordedAt: now,
+      synced: true,
+      updatedAt: now,
+      courseName: insertAttendance.courseName || null,
+      section: insertAttendance.section || null
+    };
+    this.attendanceRecords.set(id, attendance);
+    return attendance;
+  }
+
+  async updateAttendance(id: number, attendanceUpdate: Partial<Attendance>): Promise<Attendance | undefined> {
+    const attendance = this.attendanceRecords.get(id);
+    if (!attendance) return undefined;
+    
+    const updatedAttendance = { ...attendance, ...attendanceUpdate };
+    this.attendanceRecords.set(id, updatedAttendance);
+    return updatedAttendance;
+  }
+
+  async deleteAttendance(id: number): Promise<boolean> {
+    return this.attendanceRecords.delete(id);
+  }
+
+  async getNamazAttendance(id: number): Promise<NamazAttendance | undefined> {
+    return this.namazAttendanceRecords.get(id);
+  }
+
+  async getNamazAttendanceByFilter(filters: Partial<NamazAttendance>): Promise<NamazAttendance[]> {
+    const namazAttendance = Array.from(this.namazAttendanceRecords.values());
+    return namazAttendance.filter(record => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (value === undefined) return true;
+        return record[key as keyof NamazAttendance] === value;
+      });
+    });
+  }
+
+  async createNamazAttendance(insertNamazAttendance: InsertNamazAttendance): Promise<NamazAttendance> {
+    const id = this.namazAttendanceCurrentId++;
+    const now = new Date();
+    const namazAttendance: NamazAttendance = { ...insertNamazAttendance, id, createdAt: now };
+    this.namazAttendanceRecords.set(id, namazAttendance);
+    return namazAttendance;
+  }
+
+  async updateNamazAttendance(id: number, namazAttendanceUpdate: Partial<NamazAttendance>): Promise<NamazAttendance | undefined> {
+    const namazAttendance = this.namazAttendanceRecords.get(id);
+    if (!namazAttendance) return undefined;
+    
+    const updatedNamazAttendance = { ...namazAttendance, ...namazAttendanceUpdate };
+    this.namazAttendanceRecords.set(id, updatedNamazAttendance);
+    return updatedNamazAttendance;
+  }
+
+  async deleteNamazAttendance(id: number): Promise<boolean> {
+    return this.namazAttendanceRecords.delete(id);
+  }
+
+  async getLeave(id: number): Promise<Leave | undefined> {
+    return this.leaveRecords.get(id);
+  }
+
+  async getLeaveByFilter(filters: Partial<Leave>): Promise<Leave[]> {
+    const leaves = Array.from(this.leaveRecords.values());
+    return leaves.filter(record => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (value === undefined) return true;
+        return record[key as keyof Leave] === value;
+      });
+    });
+  }
+
+  async createLeave(insertLeave: InsertLeave): Promise<Leave> {
+    const id = this.leaveCurrentId++;
+    const now = new Date();
+    const leave: Leave = { 
+      ...insertLeave, 
+      id, 
+      createdAt: now,
+      status: insertLeave.status || "active"
+    };
+    this.leaveRecords.set(id, leave);
+    return leave;
+  }
+
+  async updateLeave(id: number, leaveUpdate: Partial<Leave>): Promise<Leave | undefined> {
+    const leave = this.leaveRecords.get(id);
+    if (!leave) return undefined;
+    
+    const updatedLeave = { ...leave, ...leaveUpdate };
+    this.leaveRecords.set(id, updatedLeave);
+    return updatedLeave;
+  }
+
+  async deleteLeave(id: number): Promise<boolean> {
+    return this.leaveRecords.delete(id);
+  }
+
+  async getResult(id: number): Promise<Result | undefined> {
+    return this.resultRecords.get(id);
+  }
+
+  async getResultByFilter(filters: Partial<Result>): Promise<Result[]> {
+    const results = Array.from(this.resultRecords.values());
+    return results.filter(record => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (value === undefined) return true;
+        return record[key as keyof Result] === value;
+      });
+    });
+  }
+
+  async createResult(insertResult: InsertResult): Promise<Result> {
+    const id = this.resultCurrentId++;
+    const now = new Date();
+    const result: Result = { 
+      ...insertResult, 
+      id,
+      uploadDate: now,
+      courseName: insertResult.courseName || null,
+      section: insertResult.section || null,
+      uploadedBy: insertResult.uploadedBy || null,
+      notes: insertResult.notes || null
+    };
+    this.resultRecords.set(id, result);
+    return result;
+  }
+
+  async updateResult(id: number, resultUpdate: Partial<Result>): Promise<Result | undefined> {
+    const result = this.resultRecords.get(id);
+    if (!result) return undefined;
+    
+    const updatedResult = { ...result, ...resultUpdate };
+    this.resultRecords.set(id, updatedResult);
+    return updatedResult;
+  }
+
+  async deleteResult(id: number): Promise<boolean> {
+    return this.resultRecords.delete(id);
+  }
+
+  async getRemark(id: number): Promise<Remark | undefined> {
+    return this.remarkRecords.get(id);
+  }
+
+  async getRemarkByFilter(filters: Partial<Remark>): Promise<Remark[]> {
+    const remarks = Array.from(this.remarkRecords.values());
+    return remarks.filter(record => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (value === undefined) return true;
+        return record[key as keyof Remark] === value;
+      });
+    });
+  }
+
+  async createRemark(insertRemark: InsertRemark): Promise<Remark> {
+    const id = this.remarkCurrentId++;
+    const now = new Date();
+    const remark: Remark = { 
+      ...insertRemark, 
+      id, 
+      createdAt: now,
+      category: insertRemark.category || "general"
+    };
+    this.remarkRecords.set(id, remark);
+    return remark;
+  }
+
+  async updateRemark(id: number, remarkUpdate: Partial<Remark>): Promise<Remark | undefined> {
+    const remark = this.remarkRecords.get(id);
+    if (!remark) return undefined;
+    
+    const updatedRemark = { ...remark, ...remarkUpdate };
+    this.remarkRecords.set(id, updatedRemark);
+    return updatedRemark;
+  }
+
+  async deleteRemark(id: number): Promise<boolean> {
+    return this.remarkRecords.delete(id);
+  }
+
+
+
+  async getHoliday(id: number): Promise<Holiday | undefined> {
+    return this.holidayRecords.get(id);
+  }
+
+  async getHolidayByFilter(filters: Partial<Holiday>): Promise<Holiday[]> {
+    const holidays = Array.from(this.holidayRecords.values());
+    return holidays.filter(record => {
+      return Object.entries(filters).every(([key, value]) => {
+        if (value === undefined) return true;
+        return record[key as keyof Holiday] === value;
+      });
+    });
+  }
+
+  async createHoliday(insertHoliday: InsertHoliday): Promise<Holiday> {
+    const id = this.holidayCurrentId++;
+    const now = new Date();
+    const holiday: Holiday = { 
+      ...insertHoliday, 
+      id, 
+      createdAt: now,
+      reason: insertHoliday.reason || null,
+      affectedCourses: insertHoliday.affectedCourses || null,
+      triggeredAt: null,
+      pdfUrl: insertHoliday.pdfUrl || null
+    };
+    this.holidayRecords.set(id, holiday);
+    return holiday;
+  }
+
+  async updateHoliday(id: number, holidayUpdate: Partial<Holiday>): Promise<Holiday | undefined> {
+    const holiday = this.holidayRecords.get(id);
+    if (!holiday) return undefined;
+    
+    const updatedHoliday = { ...holiday, ...holidayUpdate };
+    this.holidayRecords.set(id, updatedHoliday);
+    return updatedHoliday;
+  }
+
+  async deleteHoliday(id: number): Promise<boolean> {
+    return this.holidayRecords.delete(id);
+  }
+}
+
+// Storage factory - uses database when available
+function createStorage(): IStorage {
+  if (process.env.DATABASE_URL) {
+    try {
+      console.log('[STORAGE] Using DatabaseStorage - connected to PostgreSQL');
+      return new DatabaseStorage();
+    } catch (error) {
+      console.log('[STORAGE] Database connection failed:', (error as Error).message);
+      console.log('[STORAGE] Falling back to MemStorage');
+      return new MemStorage();
+    }
+  }
+  
+  console.log('[STORAGE] Using MemStorage - all features available');
+  return new MemStorage();
+}
+
+export const storage = createStorage();

@@ -1,0 +1,80 @@
+Build a fully functional "Subject & Timetable Management" module with the following features and architecture:
+
+---
+
+### 🔷 SECTION: Subject Management
+- Allow admin to **add subjects** per year.
+- Subject structure:
+  - Course Type (PUC / Post PUC)
+  - Stream (Commerce / Science)
+  - Year (1st PU to 7th Year)
+  - Section (Only for PUC Commerce A/B)
+- Store subjects in database with metadata:
+  - subjectID, subjectName, stream, year, section (if applicable)
+- Sync subjects with timetable builder.
+
+---
+
+### 🔷 SECTION: Timetable Builder
+- Weekly timetable grid (**Monday to Sunday**)
+- **Friday must be disabled (Leave day)** – no periods allowed
+- Dynamically generate rows based on **max allowed periods**:
+  - 1st & 2nd PUC: 3 periods/day
+  - 3rd–5th Year: 7 periods/day
+  - 6th & 7th Year: 8 periods/day
+- Allow setting:
+  - Subject per period
+  - Period Name
+  - Period Start/End Time
+- Validations:
+  - No time overlaps
+  - No duplicate subjects in a single day unless allowed
+- Save weekly grid per class (based on Course, Year, Stream, Section if applicable)
+
+---
+
+### 🔄 Sync Logic with Attendance
+- When Take Attendance is opened:
+  - Fetch current day timetable
+  - Auto-fill period structure
+- Sync with:
+  - ✅ Take Attendance
+  - 📊 Attendance Sheet
+  - 🕒 Missed Attendance
+  - 📅 History
+- Use real-time fetch based on:
+  - Date
+  - Class metadata
+  - Get mapped periods from timetable builder
+
+---
+
+### ⚙️ BACKEND (Firebase / Replit DB)
+- `/subjects`: Store all subjects with courseType/year/stream/section
+- `/timetables`: Class-wise timetable with periods per day
+- `/attendance`: Sync periods to reflect timetable config
+- Auto-generate default template if timetable not found for class
+
+---
+
+### 🧠 ADDITIONAL FEATURE IDEAS
+- 🔄 Duplicate timetable across sections/years
+- ⏰ Bulk edit timings
+- 📅 Holiday-aware schedule skipping (with Friday as default weekly holiday)
+- 🧾 Export timetable per class
+
+---
+
+### 🔗 UI Navigation Fix
+- Fix "Click to open →" for both Subject Management & Timetable Builder
+  - Route them to respective functional pages
+  - If blank, ensure correct routing setup & fetch logic
+
+---
+
+### 📝 Example:
+For 3rd Year Post PUC:
+- Subject list: Arabic, Tafseer, Fiqh, Hadith, etc.
+- Timetable: 7 periods per day
+- Friday will show "No Classes"
+- Attendance auto-generates per class based on schedule

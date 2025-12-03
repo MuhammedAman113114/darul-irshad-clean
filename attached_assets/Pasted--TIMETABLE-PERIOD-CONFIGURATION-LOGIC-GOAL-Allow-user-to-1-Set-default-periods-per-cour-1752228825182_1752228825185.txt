@@ -1,0 +1,64 @@
+📘 TIMETABLE PERIOD CONFIGURATION LOGIC
+
+🎯 GOAL:
+Allow user to:
+1. Set default periods per course level (PUC = 3, 3rd–5th = 7, 6th–7th = 8)
+2. Customize number of periods per weekday (e.g., Monday = 4, Tuesday = 3)
+3. Add/Delete periods per day directly from the Timetable > Edit view
+4. Reflect changes instantly in Attendance, Timetable UI, and Database
+
+🛠️ FRONTEND (React Native / Web):
+- Inside Timetable > Edit Mode, show:
+  ▸ Editable dropdown/select next to each weekday: “Number of Periods”
+  ▸ Auto-generate blank slots for new periods
+  ▸ Provide “+ Add Period” and 🗑️ delete buttons inline per day
+- Show period labels (P1, P2...) and time slots
+- Sync new added period with global Period DB and bind to current section
+- Reflect immediately in:
+  ▸ Attendance screen (auto-render new slots)
+  ▸ Subject assigning options
+
+🧠 BACKEND/FIREBASE STRUCTURE:
+
+📁 timetable/
+  └── {courseId}_{year}_{stream}_{section}/
+      ├── defaultPeriods: 3
+      ├── customDayPeriods:
+      │     ├── Monday: 4
+      │     ├── Tuesday: 3
+      │     ├── Wednesday: 3
+      │     └── ...
+      └── schedule/
+            ├── Monday/
+            │    ├── P1: {subjectId, periodId}
+            │    ├── P2: {...}
+            │    └── ...
+            └── ...
+
+📁 periodDefinitions/
+  ├── P1: {time: "09:00-10:00"}
+  ├── P2: {time: "10:00-11:00"}
+  └── ...
+
+🧩 SYNC RULES:
+- On Period Add/Delete in Timetable, auto-sync changes:
+  ▸ Update periodDefinitions if new period created
+  ▸ Update subject schedule for section
+  ▸ Trigger live re-render in Attendance Screen
+
+📌 DEFAULT SETUP:
+- On new class/section creation:
+  ▸ Auto-assign default periods based on year
+  ▸ Provide option “Edit Period Count per Day” inside Edit Timetable
+
+✅ EXAMPLE USE CASE:
+- PU College > 1st Year > Commerce A:
+  ▸ Default: 3 Periods/day
+  ▸ Monday modified to 4 periods via +Add Period in Edit Timetable
+  ▸ Period 4 added only to Monday
+  ▸ Attendance view now shows 4 toggles for Monday, 3 for others
+
+🔄 UPDATE LOGIC:
+- Editing period count or time = PATCH to Firebase
+- Add/Delete period per day = restructure timetable/{day}/ array
+- All changes reflect live in Timetable and Attendance

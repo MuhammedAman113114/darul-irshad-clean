@@ -1,0 +1,45 @@
+// ✅ Replit-Styled Prompt: Fix Attendance System Integration with Subject & Timetable
+
+/*
+⚠️ PROBLEM:
+1. "Take Attendance" fetches all periods on a date, but does NOT filter based on correct day's timetable.
+2. Friday is marked as holiday in timetable but attendance options still appear.
+3. "Attendance Sheet" shows incorrect or generic data — it must display attendance per subject based on actual timetable.
+4. Excel export shows attendance per period but not mapped with correct subject names/times.
+
+📘 SYSTEM ARCHITECTURE:
+- subject = stored in `subjects` table (id, subject, subjectCode, courseType)
+- timetable = stored in `timetable` table (courseType, year, stream, section, dayOfWeek, periodNumber, subjectId, startTime, endTime)
+- timetablePeriodConfig = configures how many periods per day per class
+- attendance = saved with studentId, date, period, courseType, courseName, section, status
+
+✅ EXPECTED LOGIC:
+1. On Take Attendance:
+   - fetch timetable using dayOfWeek (based on selected date)
+   - filter only the periods scheduled for that specific weekday
+   - exclude days marked as holiday (like Friday)
+
+2. In Attendance Sheet:
+   - for each attendance entry, join with timetable to show subjectCode and timings
+   - display "AQD (09:00 - 10:00)" instead of just "P1"
+   - show attendance percentage per subject not just per period
+
+3. In Excel Export:
+   - Header: Subject name with timings (e.g., "AQD (09:00 - 10:00)")
+   - Each row = student; each column = subject period
+   - Attendance marked as P / A / L (based on actual subject)
+
+🔧 FIX REQUIRED:
+- [ ] In `getTimetable()` backend, use selected date's dayOfWeek to fetch only matching day's timetable entries.
+- [ ] In frontend attendance screen, disable attendance selection if no timetable exists for that date.
+- [ ] Modify attendance sheet UI to join with timetable and show subject-based periods.
+- [ ] Fix Excel generation to format data per subject-timetable mapping.
+
+📌 Example:
+If 2025-07-15 is Tuesday:
+- Fetch timetable where dayOfWeek = "tuesday" AND courseType + year + stream + section
+- Attendance dropdown should only show Tuesday's subjects
+- Attendance sheet and Excel should match this structure
+
+*/
+

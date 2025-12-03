@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear All Frontend Data</title>
+</head>
+<body>
+    <h2>Clearing ALL Frontend Data...</h2>
+    <div id="status">Processing...</div>
+    
+    <script>
+        console.log("🗑️ CLEARING ALL FRONTEND DATA...");
+        
+        // Get all localStorage keys
+        const allKeys = Object.keys(localStorage);
+        console.log("Found localStorage keys:", allKeys);
+        
+        // Clear all attendance-related data
+        const clearKeys = [
+            'attendance_history',
+            'attendanceHistory', 
+            'attendance_data',
+            'attendance_records',
+            'madrasa_attendance',
+            'student_attendance',
+            'daily_attendance',
+            'missed_attendance',
+            'missedAttendance',
+            'missed_attendance_data',
+            'missed_attendance_status',
+            'madrasa_missed_attendance',
+            'namaz_attendance',
+            'namazAttendance',
+            'emergency_leave',
+            'emergencyLeave'
+        ];
+        
+        // Clear specific keys
+        clearKeys.forEach(key => {
+            if (localStorage.getItem(key)) {
+                localStorage.removeItem(key);
+                console.log(`✅ Cleared: ${key}`);
+            }
+        });
+        
+        // Clear any keys containing attendance/missed/namaz
+        allKeys.forEach(key => {
+            const lowerKey = key.toLowerCase();
+            if (lowerKey.includes('attendance') || 
+                lowerKey.includes('missed') || 
+                lowerKey.includes('namaz') ||
+                lowerKey.includes('history')) {
+                localStorage.removeItem(key);
+                console.log(`✅ Cleared related: ${key}`);
+            }
+        });
+        
+        // Clear sessionStorage too
+        sessionStorage.clear();
+        console.log("✅ Cleared sessionStorage");
+        
+        document.getElementById('status').innerHTML = "✅ All data cleared! Redirecting to clean app...";
+        
+        // Force hard refresh to clear React Query cache
+        setTimeout(() => {
+            window.location.href = window.location.origin + "/?nocache=" + Date.now();
+        }, 1000);
+    </script>
+</body>
+</html>

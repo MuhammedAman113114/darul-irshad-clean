@@ -1,0 +1,85 @@
+// 🌟 Leave Management System — Full Implementation Plan
+
+/**
+ * 🧱 SECTION: CORE FEATURES
+ *
+ * 1. Add Leave
+ *    - Select Student (dropdown + search)
+ *    - Select From Date → To Date (Date range picker)
+ *    - Leave Type: Full Day / Half Day / Specific Periods
+ *    - Reason for Leave (textarea)
+ *    - Submit Button: Save to backend with validation
+ *
+ * 2. View Leaves
+ *    - Filter: Student, Class, Date Range
+ *    - Status Indicator: Approved / Rejected / Pending
+ *    - Show history in list or card view (date + reason)
+ *
+ * 3. Edit/Delete Leave (if status = Pending)
+ *    - Edit button → reopen form
+ *    - Delete button → confirmation modal
+ *
+ * 4. Approval Workflow (optional)
+ *    - Principal/Teacher role can approve/reject
+ *    - Status field stored: pending, approved, rejected
+ *    - Leave gets locked if approved (non-editable)
+ */
+
+/**
+ * 💾 SECTION: BACKEND DESIGN (Supabase / Firebase / Node + DB)
+ *
+ * Table: `leaves`
+ * - id (uuid)
+ * - student_id (ref: students)
+ * - from_date (date)
+ * - to_date (date)
+ * - leave_type (enum: full, half, period)
+ * - reason (text)
+ * - status (enum: pending, approved, rejected)
+ * - created_at, updated_at (timestamps)
+ * - submitted_by (user_id)
+ *
+ * 🔐 Use RLS in Supabase to allow:
+ * - Teachers can add for their students
+ * - Principal can see all + approve/reject
+ */
+
+/**
+ * 🖼️ SECTION: FRONTEND COMPONENTS (React/Flutter/etc.)
+ *
+ * <LeaveForm />
+ * - Dropdown: Student picker
+ * - Calendar: From date / To date
+ * - Dropdown: Leave type
+ * - Textarea: Reason
+ * - Submit button with loading state
+ *
+ * <LeaveHistory />
+ * - List of leaves with:
+ *    date, type, reason, status
+ * - Filters: Class, Student, Date
+ * - Edit/Delete buttons (if allowed)
+ *
+ * <LeaveApproval /> (optional for admin)
+ * - Filter: Pending requests
+ * - Buttons: Approve / Reject
+ */
+
+/**
+ * 🔔 SECTION: NOTIFICATIONS (Optional)
+ *
+ * - After submit: show toast “Leave request submitted”
+ * - If approved/rejected: show status toast or send notification to student/teacher
+ */
+
+/**
+ * 📱 SECTION: UX DETAILS
+ *
+ * - Mobile First UI
+ * - Big touch buttons
+ * - Sticky top tabs: Add Leave | View Leaves
+ * - Validation messages for empty fields
+ * - Auto-fill today's date
+ * - Color-coded status (green=approved, red=rejected, yellow=pending)
+ */
+

@@ -1,0 +1,104 @@
+## NAVIGATION
+- Sidebar Menu:
+  - Attendance ➤ Leads to 3 tabs: [Take Attendance | History | Settings]
+  - Namaz
+  - Leave
+  - Remarks
+  - Results
+  - Calendar
+  - Class Management
+- User Info: Name, Role shown at the top
+- Logout at bottom
+
+## TAKE ATTENDANCE TAB
+- Header:
+  - Date Picker 📆
+  - Attendance Type Toggle: Lecture | Note
+  - Class & Year Dropdown (1st PU – 7th Year)
+  - Course Dropdown (Commerce/Science)
+  - Section (A/B if 1st or 2nd PU Commerce)
+
+- Period Handling (dynamic by year):
+  - 1st–2nd PU → 3 Periods/day
+  - 3rd–5th Year → 6 Periods/day
+  - 6th–7th Year → 8 Periods/day
+  - Can Add/Remove periods (up to set max per year)
+  - Input Fields: Period Time + Subject Name (if enabled in Settings)
+
+- Attendance State:
+  - Active ➤ Show student list
+  - Inactive ➤ Message: “Attendance not active. Enable to mark attendance.”
+
+- Student List UI:
+  - Student Name + Roll Number
+  - Toggle Buttons: ✅ Present | ❌ Absent | 🟡 Leave
+  - Auto-default: Absent (if untouched)
+  - Leave students marked with 🟡 and counted as absent
+  - Search Bar at top to filter students
+
+- Summary Bar:
+  - Counts of ✅ Present, ❌ Absent, 🟡 Leave (Real-time)
+
+- Save Button: Stores attendance per period with timestamp
+- Overwrite Confirmation: If data exists, asks before saving
+
+## SETTINGS TAB
+- Period Manager:
+  - Customize period count per year
+  - Edit Period Name + Time
+  - Add/Delete Periods with validation
+
+- Preferences:
+  - ✅ Auto-mark absent
+  - ✅ Show leave tag
+  - ✅ Require subject name
+  - ✅ Save offline (uses localStorage)
+
+## HISTORY TAB
+- Date Filter: From - To range picker
+- Class/Year/Course/Section filters
+- Attendance Record List View:
+  - Summary (Present/Absent/Leave)
+  - Tap record ➤ View/Edit attendance
+
+## DATA & STORAGE
+- All data stored using `localStorage`
+- Auto-save & offline support
+- Clean UX for no internet cases
+- Confirmation dialogs on critical changes
+📱 UI/UX DESIGN RECOMMENDATIONS (Mobile-First)
+General Layout:
+
+Clean tabbed navigation inside Attendance (Take, History, Settings)
+
+Use cards for periods, modals for editing
+
+Sticky Save button on Take Attendance
+
+Use light theme with consistent iconography
+
+Colors & Icons:
+
+✅ Green → Present
+
+❌ Red → Absent
+
+🟡 Yellow → Leave
+
+🔁 Blue → Sync
+
+🛠️ Gray → Settings
+
+Interaction Flows:
+
+Auto-scroll to next student after marking
+
+Add haptic feedback or visual tick after save
+
+Pull-to-refresh in history list
+
+Empty States:
+
+“No attendance records yet” messages
+
+Show hint for adding first period in settings if empty

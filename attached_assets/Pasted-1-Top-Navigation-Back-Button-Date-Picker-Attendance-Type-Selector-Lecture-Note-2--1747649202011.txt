@@ -1,0 +1,127 @@
+1️⃣ Top Navigation
+🔙 Back Button
+
+📆 Date Picker
+
+📍 Attendance Type Selector: Lecture | Note
+
+2️⃣ Class & Course Selector
+🏫 Dropdown: Select Year (1st PU, 2nd PU, ..., 7th Year)
+
+
+
+📚 Dropdown: Select Course (e.g., Commerce, Science)
+
+🧩 If applicable → Dropdown: Select Section (A, B)
+
+Dynamically shown only for 1st & 2nd PU Commerce.
+
+3️⃣ Mode Toggle
+🎯 Active / Inactive toggle (Switch)
+
+If Active → Show student list & attendance UI
+
+If Inactive → Hide student list with note:
+
+“Attendance not active. Enable to mark attendance.”
+
+4️⃣ Student List View
+For each student:
+
+css
+Copy
+Edit
+👤 [Student Name]
+🟢 Present   ❌ Absent      [2-Button Toggle]
+You can use toggle buttons or radio-style chips
+
+Auto-defaults to ❌ Absent if no selection
+
+If student is on leave → default to 🟡 Leave
+
+Also include a 🔍 Search bar for student filtering.
+
+5️⃣ Footer Actions
+💾 Save Attendance (CTA Button)
+
+🧼 Clear All (optional)
+
+🔁 Behavior Summary
+Action	Effect
+Set Lecture to "Inactive"	Student list hidden
+Switch to "Active"	Show student list & attendance controls
+Toggle Present/Absent/Leave	Affects totals instantly
+Mark as Leave	Counted as Absent but visually distinct
+Switch course/section	Refresh student list dynamically
+
+🪄 Suggested UX Enhancements:
+Color code statuses:
+
+✅ Green = Present
+
+❌ Red = Absent
+
+🟡 Yellow = Leave
+
+Show total present/absent/leave count at bottom
+
+Auto-scroll to next student after marking
+
+Save attendance locally (offline mode support) then sync
+
+ Mobile App Attendance UI Design (By Year Level)
+🔷 Top Navigation
+Dropdown: Select Year & Course (e.g., "1st PU - Commerce")
+
+Toggle: "Lecture" / "Note"
+
+Switch: “Active” / “Inactive”
+
+📘 PUC View (1st & 2nd PU)
+Daily Attendance Cards (3 per day):
+
+css
+Copy
+Edit
+[🕘 Period 1] [✔️ Present | ❌ Absent | 🟡 Leave]
+[🕙 Period 2] [✔️ Present | ❌ Absent | 🟡 Leave]
+[🕛 Period 3] [✔️ Present | ❌ Absent | 🟡 Leave]
+Section Tabs: A | B (if Commerce)
+
+Auto Status: If on leave → 🟡 Leave by default
+
+🟠 3rd to 5th Year View
+Default 7 Period Slots
+
+➕ Add Period / ❌ Delete Period (FAB Button or Icon per slot)
+
+Each period block:
+
+css
+Copy
+Edit
+Period Name/Time
+[✔️ Present | ❌ Absent | 🟡 Leave]
+🟣 6th to 8th Year View
+Editable 7 Period Slots
+
+Tap period → open modal:
+
+Change name/time
+
+Save/Delete
+
+⚙️ General Features
+🕵️‍♂️ Student List: Scrollable with toggle for each (P/A/L)
+
+📊 Summary Bar (bottom):
+
+Present: ✅
+
+Absent: ❌
+
+Leave: 🟡
+
+💾 Save Button (sticky bottom)
+
+🔄 Real-time sync (no reload)

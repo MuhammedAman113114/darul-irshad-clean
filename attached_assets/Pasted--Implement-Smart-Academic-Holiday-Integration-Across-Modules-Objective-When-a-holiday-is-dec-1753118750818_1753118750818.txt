@@ -1,0 +1,110 @@
+🛠️ Implement Smart Academic Holiday Integration Across Modules
+
+📌 Objective:
+When a holiday is declared in the Academic Calendar for PUC or Post-PUC:
+
+Attendance Sheet should automatically mark H for that date & period.
+
+Namaz Tracking should skip or mark as holiday.
+
+Excel Sheet Export should show H under all periods for that date.
+
+Sheet should display Holiday Banner only for relevant course (PUC or Post-PUC).
+
+Holiday should not affect the other course if not selected.
+
+🔁 Modules to Connect:
+✅ Academic Calendar → Replit DB
+
+js
+Copy
+Edit
+// Example Replit DB Entry:
+db.set(`holiday_2025-07-21`, {
+  date: '2025-07-21',
+  type: 'Academic',
+  courses: ['PUC'], // ['PUC'] or ['Post-PUC'] or both
+  reason: 'Eid'
+});
+📅 Take Attendance Screen Logic
+
+Before allowing attendance, check for holiday:
+
+js
+Copy
+Edit
+const isHoliday = await db.get(`holiday_${selectedDate}`);
+if (isHoliday?.courses.includes(currentCourseType)) {
+  disableAttendanceInputs();
+  showHolidayBanner(isHoliday.reason);
+}
+🧾 Attendance Sheet Auto Fill Logic
+
+On load, auto-mark H for all periods if it's a declared holiday:
+
+js
+Copy
+Edit
+const isHoliday = await db.get(`holiday_${selectedDate}`);
+if (isHoliday?.courses.includes(courseType)) {
+  studentAttendance[studentId][period] = 'H'; // loop all periods
+}
+📦 Excel Sheet Export
+
+If a holiday is declared, output H in all subject columns:
+
+js
+Copy
+Edit
+if (holidayExistsOn(date)) {
+  row[subjectName] = 'H';
+}
+🙏 Namaz Tracking
+
+On holiday, auto-skip namaz check or label:
+
+js
+Copy
+Edit
+if (holidayExistsOn(date) && courseType === 'PUC') {
+  namazLog[studentId][date] = 'Holiday';
+}
+🎯 Course-specific Logic
+
+Respect checkbox selection:
+
+js
+Copy
+Edit
+if (holiday.courses.includes('PUC') && courseType === 'PUC') {
+  // apply logic
+} else if (holiday.courses.includes('Post-PUC') && courseType === 'Post-PUC') {
+  // apply logic
+}
+🎉 UI Holiday Banner
+
+js
+Copy
+Edit
+if (isHoliday) {
+  showBanner(`Holiday: ${isHoliday.reason}`);
+}
+🧪 Test Case:
+
+Mark 21st July 2025 as Academic Holiday for PUC.
+
+Go to Attendance Sheet → Should auto-fill H in all cells.
+
+Try taking attendance → All inputs disabled, Holiday banner appears.
+
+Export Excel → All entries on 21st July show H.
+
+Namaz → Entry skipped or marked Holiday.
+
+Post-PUC sections → unaffected.
+
+✅ DB Keys to Maintain:
+
+holiday_YYYY-MM-DD → contains date, reason, course list.
+
+Avoid mixing PUC/Post-PUC in UI if only one is marked as holiday.

@@ -1,0 +1,60 @@
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 0, filteredCount: 0, filteredNames: Array(0)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}

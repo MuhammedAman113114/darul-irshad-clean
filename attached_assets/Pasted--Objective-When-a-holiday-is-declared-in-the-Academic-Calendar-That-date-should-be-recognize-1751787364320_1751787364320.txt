@@ -1,0 +1,74 @@
+🎯 Objective:
+
+When a holiday is declared in the Academic Calendar:
+	•	That date should be recognized as a holiday in both:
+	•	Period-wise Attendance module
+	•	Namaz Tracking module
+	•	The UI should show that attendance is disabled with a message like: “Holiday Declared”.
+	•	In the sheets and exports, the cell should show “H” (Holiday), gray color, and not affect attendance percentage.
+
+📦 Database (use your existing holidays table):
+
+Table: holidays
+
+Fields used:
+	•	date (TEXT)          → e.g., “2025-07-07”
+	•	type (TEXT)          → “Academic” or “Emergency”
+	•	name (TEXT)          → e.g., “Bakrid”, “Sunday”
+	•	affected_courses (TEXT[]) → e.g., [“PUC”, “Post-PUC”]
+	•	is_deleted (BOOLEAN) → default false
+
+📡 API/Functions Required:
+	•	getHolidayByDate(date: string): returns holiday entry if exists and not deleted
+	•	isHoliday(date: string, class_id: string): true/false based on affected_courses
+
+💡 Frontend Behavior in Attendance & Namaz:
+
+When a teacher opens the Attendance or Namaz Tracker for a date:
+	•	Step 1: Call isHoliday(selected_date, selected_class_id)
+	•	Step 2: If true:
+	•	Show alert or tag: 🚫 “Academic Holiday - [Holiday Name]”
+	•	Disable all attendance checkboxes or inputs
+	•	Pre-fill table cells with “H”
+	•	Apply gray background to holiday cells
+	•	Prevent “Save Attendance” or “Save Namaz” on holidays
+	•	Step 3: If false:
+	•	Show attendance inputs as usual
+
+🧾 In Attendance Sheet (Table View):
+	•	Show:
+	•	H in cells where holiday exists
+	•	Gray background
+	•	Not counted in % present/absent
+	•	Tooltip on hover: “Holiday: Sunday”
+
+📤 In Excel Export:
+	•	Each sheet (period-wise or namaz) should also show “H” in the cell for the holiday date
+	•	These should not be counted in attendance statistics
+
+🧩 Sample Frontend Logic (pseudo-code):
+
+function renderAttendanceCell(student, date, class_id) {
+const holiday = getHolidayByDate(date);
+if (holiday && holiday.affected_courses.includes(class_id)) {
+return {
+value: “H”,
+disabled: true,
+tooltip: “Holiday: “ + holiday.name,
+bgColor: “#e0e0e0”
+};
+} else {
+return {
+value: “”,
+disabled: false
+};
+}
+}
+
+🛠 Integration Checklist:
+	•	[✔] Holiday creation in academic calendar adds entry to holidays table.
+	•	[✔] Attendance/Namaz modules call isHoliday() on page load for selected date.
+	•	[✔] UI blocks input and shows “Holiday” status.
+	•	[✔] Attendance sheets reflect H and gray style.
+	•	[✔] Summary % skips holiday dates.
+	•	[✔] Exported Excel shows H for holidays

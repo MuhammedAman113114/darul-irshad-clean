@@ -1,0 +1,81 @@
+📚 Class Structure:
+- 1st PU & 2nd PU:
+    - Courses:
+        - Commerce → Sections: A, B
+        - Science → Single Batch (no section)
+- 3rd to 7th Year:
+    - Single Batch (no sections)
+
+🛠️ Core Features:
+
+1. Lecture/Note Selector:
+    - Dropdown:
+        - Options: "Lecture", "Note"
+        - Used to categorize attendance type
+
+2. Mode Toggle (Active/Inactive):
+    - If "Active":
+        - Show student list with Present/Absent toggles
+        - Attendance is saved and counted
+    - If "Inactive":
+        - Hide student list
+        - Display note: "Attendance not active. Enable to mark attendance."
+        - Future attendance can still be taken by re-activating
+
+3. Course & Section Picker:
+    - Year Selector (Dropdown): 1st PU to 7th Year
+    - Course Selector (Dropdown): Commerce, Science (only for 1st & 2nd PU)
+    - Section Selector (Dropdown):
+        - Only shown for 1st & 2nd PU Commerce → Sections A/B
+        - Hidden for Science and higher years
+
+✅ Attendance Logic:
+
+- Student States:
+    - ✅ Present
+    - ❌ Absent (Default)
+    - 🟡 On Leave → Shown as a tag but still treated as Absent
+
+- Only two actionable options: Present or Absent
+- If student is on official leave:
+    - Display yellow "On Leave" tag beside name
+    - Counted under Absent in summary
+
+📅 Period Structure:
+
+- 1st & 2nd PU:
+    - Fixed 3 periods per day
+
+- 3rd–5th Year:
+    - Default: 7 periods/day
+    - Add/Delete period allowed
+
+- 6th–7th Year:
+    - 7 periods/day
+    - Period name & time can be edited
+
+🧠 Smart Behavior:
+
+- Auto-switch view depending on selected year/course/section
+- Student list updates dynamically
+- Prevent marking attendance multiple times for same period
+    - Once saved, period becomes read-only unless reopened
+- Auto-save to local if offline; sync later
+
+🧩 Student List UI:
+- List item format:
+    ```
+    👤 [Student Name]   [✅ Present] [❌ Absent]   (🟡 On Leave tag if applicable)
+    ```
+- Optional search bar for quick filtering
+- Summary at bottom:
+    ```
+    ✅ Present: [count]   ❌ Absent: [count]
+    ```
+
+🔘 Footer Actions:
+- [💾 Save Attendance]
+- [🧼 Clear All] (optional)
+
+🔄 Future-Proof:
+- Attendance can be toggled from inactive → active later

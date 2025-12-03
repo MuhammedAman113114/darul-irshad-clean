@@ -1,0 +1,117 @@
+Here’s a full Replit-styled prompt that includes both:
+	1.	Database structure & logic for missed attendance tracking
+	2.	Frontend UI behavior and integration
+This is designed to work for Period-wise Attendance only, not Namaz Tracking.
+
+🟠 REPLIT-STYLED TEXT PROMPT — MISSED SECTION (PERIOD ATTENDANCE)
+
+📁 FEATURE: Missed Attendance Tracker
+
+📌 GOAL:
+Track all class periods where attendance was not taken after 12 AM for any day, excluding holidays and approved/emergency leaves.
+Allow teachers/admin to view and take attendance for missed classes in a structured timetable format.
+
+––––––––––––––––––––––––––––––––––––––––
+
+📂 DATABASE PROMPT (Backend Logic + Storage)
+
+🔸 Missed Attendance DB Table: missed_attendance_status
+
+Each record represents one period for one class on a specific day.
+
+Key structure:
+missed_{courseType}{year}{division}{section}{date}_{period}_lecture
+
+Example:
+missed_PU_1_A_2025-07-06_2_lecture
+
+Fields:
+
+{
+date: “2025-07-06”,
+class: {
+courseType: “PU”,
+year: “1”,
+division: “Commerce”,
+section: “A”
+},
+period: 2,
+status: “taken” | “not_taken” | “leave” | “emergency” | “holiday”,
+takenBy: “teacher_123”, // if taken
+timestamp: “2025-07-06T10:32:00Z”, // if taken
+remarks: “”, // optional note
+studentCount: 34,
+attendanceKey: attendance_PU_1_Commerce_A_2025-07-06_2_lecture
+}
+
+Auto-trigger after 12:00 AM each day:
+	•	Fetch calendar → If holiday → set status = “holiday”
+	•	Else check leave DB → if leave exists → set “leave” or “emergency”
+	•	Else check attendance DB → if not marked → status = “not_taken”
+	•	Else if marked → status = “taken”
+
+––––––––––––––––––––––––––––––––––––––––
+
+🎨 FRONTEND UI PROMPT (Missed Section View)
+
+🔸 Route: /missed-attendance
+
+Component Name: MissedAttendanceScreen
+
+💡 Layout: Timetable Grid
+
+Y-axis: Dates (past 7 or 30 days)
+X-axis: Periods (1–8)
+Each cell = one lecture period
+
+Example Grid (1 week, 3 periods/day):
+
+Date	P1	P2	P3
+06-Jul-25	✅ Taken	❌ Missed	🟨 Leave
+05-Jul-25	🟥 Missed	✅ Taken	🟢 Holiday
+04-Jul-25	❌ Missed	❌ Missed	✅ Taken
+
+🟩 = Taken
+🟥 = Not Taken
+🟨 = Leave
+🟠 = Emergency Leave
+🟢 = Holiday
+
+📲 Interactions:
+	•	❌ cell: clickable → opens attendance form (TakeAttendanceModal)
+	•	✅ cell: shows “Taken by: X” on tap (modal or tooltip)
+	•	🟨 / 🟠: shows leave info
+	•	🟢: disabled
+
+🔁 Refresh every 30 seconds when online
+
+📥 Save behavior:
+	•	When attendance is marked via missed section:
+→ Save to attendance DB
+→ Update missed_attendance_status to status = “taken”
+→ Sync to student dashboards + attendance sheet
+
+––––––––––––––––––––––––––––––––––––––––
+
+📊 Dashboard Sync:
+
+Missed classes from missed_attendance_status (status = “not_taken”)
+Count for today, this week, total missed
+
+––––––––––––––––––––––––––––––––––––––––
+
+🧠 OPTIMIZED PERFORMANCE
+	•	Store only last 30 days of missed status
+	•	Use flatList or VirtualizedList for scalable rendering
+	•	Cache previous fetches in AsyncStorage for offline fallback
+
+––––––––––––––––––––––––––––––––––––––––
+
+✅ FINAL BEHAVIOR:
+	•	Automatically identifies missed periods after 12 AM
+	•	Skips periods that are marked leave/emergency/holiday
+	•	UI lets user take attendance directly from missed periods
+	•	Changes reflect in main attendance DB, student profile, export sheet
+	•	Works offline + syncs when online
+
+Let me know if you’d like a diagram or frontend code to match!

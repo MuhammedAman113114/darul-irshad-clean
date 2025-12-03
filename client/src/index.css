@@ -1,0 +1,218 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styles for attendance sheet */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thumb-gray-400::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 4px;
+}
+
+.scrollbar-thumb-gray-400::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+  border-radius: 4px;
+}
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 60 4.8% 95.9%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 60 4.8% 95.9%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 20 14.3% 4.1%;
+  --radius: 0.5rem;
+  
+  /* Darul Irshad institutional brand colors */
+  --teacher-primary: 202 100% 26%; /* Dark Blue #005C83 */
+  --teacher-light: 199 100% 95%;
+  --teacher-dark: 202 100% 20%;
+  
+  /* Darul Irshad green for success and status */
+  --brand-green: 95 71% 37%; /* Green #60A917 */
+  --brand-green-light: 95 71% 95%;
+  
+  /* Light blue for accents */
+  --brand-light-blue: 199 64% 59%; /* Light Blue #53A5D4 */
+  --brand-light-blue-light: 199 64% 95%;
+  
+  /* Principal role uses green accent */
+  --principal-primary: 95 71% 37%; /* Green #60A917 */
+  --principal-light: 95 71% 95%;
+  --principal-dark: 95 71% 30%;
+  
+  /* Other custom colors */
+  --accent-amber: 38 92% 50%;
+  --success: 95 71% 37%; /* Use brand green for success */
+  --warning: 38 92% 50%;
+  --error: 0 84% 60%;
+}
+
+/* Darul Irshad Brand Utility Classes */
+.brand-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.brand-card {
+  @apply bg-white border border-gray-100 rounded-lg brand-shadow;
+}
+
+.brand-nav {
+  background-color: #005C83;
+}
+
+.brand-green {
+  color: #60A917;
+}
+
+.bg-brand-green {
+  background-color: #60A917;
+}
+
+.brand-light-blue {
+  color: #53A5D4;
+}
+
+.bg-brand-light-blue {
+  background-color: #53A5D4;
+}
+
+.brand-dark-blue {
+  color: #005C83;
+}
+
+.bg-brand-dark-blue {
+  background-color: #005C83;
+}
+
+.brand-gray-bg {
+  background-color: #F5F5F5;
+}
+
+.brand-badge {
+  @apply inline-flex px-2 py-0.5 rounded text-xs font-medium;
+  background-color: rgba(83, 165, 212, 0.1);
+  color: #53A5D4;
+}
+
+.brand-section-title {
+  @apply text-lg font-medium mb-3;
+  color: #005C83;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+}
+
+/* Custom utility classes */
+.bg-teacher-primary {
+  background-color: rgb(var(--teacher-primary) / 1);
+}
+.bg-teacher-light {
+  background-color: rgb(var(--teacher-light) / 1);
+}
+.bg-teacher-dark {
+  background-color: rgb(var(--teacher-dark) / 1);
+}
+.text-teacher-primary {
+  color: rgb(var(--teacher-primary) / 1);
+}
+
+.bg-principal-primary {
+  background-color: rgb(var(--principal-primary) / 1);
+}
+.bg-principal-light {
+  background-color: rgb(var(--principal-light) / 1);
+}
+.bg-principal-dark {
+  background-color: rgb(var(--principal-dark) / 1);
+}
+.text-principal-primary {
+  color: rgb(var(--principal-primary) / 1);
+}
+
+.bg-success {
+  background-color: rgb(var(--success) / 1);
+}
+.bg-warning {
+  background-color: rgb(var(--warning) / 1);
+}
+.bg-error {
+  background-color: rgb(var(--error) / 1);
+}
+.text-success {
+  color: rgb(var(--success) / 1);
+}
+.text-warning {
+  color: rgb(var(--warning) / 1);
+}
+.text-error {
+  color: rgb(var(--error) / 1);
+}

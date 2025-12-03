@@ -1,0 +1,67 @@
+📘 REAL-TIME ATTENDANCE MODULE LOGIC – TEXT PROMPT
+
+🎯 OBJECTIVE:
+Ensure all attendance-related modules (Management, History, Trend, Missed) rely strictly on real attendance data—no demo, placeholder, or assumed data allowed.
+
+---
+
+✅ MODULES COVERED:
+1. Attendance Management
+2. Attendance History
+3. Attendance Trends
+4. Missed Classes Tracker
+
+---
+
+📌 CORE RULES:
+- Use only actual attendance records stored after marking.
+- Do not generate or simulate data if attendance was never marked.
+- Students on approved leave or emergency leave must be excluded from "Missed Classes" calculations.
+- Real-time synchronization must be maintained across all modules.
+
+---
+
+📂 DATA DEPENDENCY:
+- Source student attendance only from verified storage (e.g., localStorage keys or actual database entries).
+- All visual components (charts, tables, stats) must reflect this real data.
+- Never auto-fill or assume present/absent status for unrecorded days.
+
+---
+
+❗ MISSED CLASS LOGIC:
+- A class is considered missed **only if**:
+  - Attendance was marked for the period
+  - Student was marked as "Absent"
+- A class is **not considered missed** if:
+  - Student was on approved leave or emergency leave
+  - Attendance for that date/period was never marked
+
+---
+
+📊 TRENDS & HISTORY:
+- All reports and analytics must calculate from actual attendance logs.
+- Monthly and weekly trends should exclude periods without attendance records.
+- Attendance percentage = Total Present ÷ Total Periods Taken (not total possible)
+
+---
+
+🔄 REAL-TIME SYNC:
+- Any attendance update must auto-refresh all dependent modules:
+  - Update trends
+  - Update missed class summaries
+  - Update student profiles
+
+---
+
+🧩 USER INTERFACE RULE:
+- Do not show dummy students or classes
+- If attendance is not marked for a day, show “No data available” instead of assuming anything
+- Missed section must clearly show date, period, subject, and reason ("Absent without leave")
+
+---
+
+🎯 OUTCOME:
+- 100% real data usage
+- No artificial inflations
+- Accurate missed tracking
+- Honest trend insights

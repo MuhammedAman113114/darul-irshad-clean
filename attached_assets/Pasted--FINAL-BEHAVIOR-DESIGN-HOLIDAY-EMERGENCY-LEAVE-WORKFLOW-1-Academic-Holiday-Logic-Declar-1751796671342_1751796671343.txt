@@ -1,0 +1,70 @@
+🎯 FINAL BEHAVIOR DESIGN: HOLIDAY & EMERGENCY LEAVE WORKFLOW
+
+🔹 1. Academic Holiday Logic
+	•	Declared in advance (can be one or more days ahead)
+	•	Once the date arrives, attendance & namaz marking will:
+	•	Be locked
+	•	Show “Holiday Declared”
+	•	Display H in attendance/namaz sheets (🟩 gray background)
+	•	Percentage calculation will skip holidays
+
+🔹 2. Emergency Leave Logic
+	•	Triggered unexpectedly during the day
+	•	Example: If today has 3 periods (PUC), and teacher completes Period 1, then triggers Emergency Leave due to exam/sudden reason → Periods 2 & 3 are auto-marked as emergency leave
+	•	Emergency leave will:
+	•	Lock the remaining periods
+	•	Pre-fill attendance sheet as E (🟥 red background)
+	•	Show status: “Emergency Leave: Applied at 11:30 AM”
+	•	Attendance % calculation will skip Emergency Leave periods
+
+🧠 SCENARIO EXAMPLE
+
+📅 Date: 2025-07-09 (Wednesday)
+🧪 Class: 1st PUC Science
+🕐 Periods: 3 total
+✅ Period 1: Attendance taken
+❌ Period 2, 3: Not yet taken
+🚨 At 11:45 AM → Emergency Leave declared
+
+🎯 Result:
+
+Period	Status
+Period 1	✅ Present/Absent
+Period 2	🟥 Emergency Leave
+Period 3	🟥 Emergency Leave
+
+No one can edit Periods 2 & 3. They’re frozen with emergency leave.
+
+🎯 BACKEND ACTION (Prompt-style for Replit AI)
+
+Update backend to:
+	•	Track leave mode
+	•	type: “academic” or “emergency”
+	•	applied_at
+	•	applied_by
+	•	affected_periods: [“2”, “3”]
+	•	When emergency leave is triggered:
+	•	Check current time & class timetable
+	•	For all remaining periods → insert leave record
+	•	Mark periods in attendance sheet with E (status)
+
+📊 FRONTEND ACTIONS
+	1.	On attendance load:
+
+	•	If holiday exists → disable inputs, mark H
+	•	If emergency leave triggered → mark affected periods as E, disable inputs
+
+	2.	Trigger Emergency Button
+
+	•	UI button → “Declare Emergency Leave”
+	•	Backend checks time
+	•	Based on periods left, stores emergency leave periods in DB
+	•	Frontend syncs & shows E in red
+
+🧾 Export Sheet
+
+Student Name	P1	P2	P3	%
+Ahmed	P	E	E	100
+Ayesha	A	E	E	0
+
+Emergency periods don’t reduce %.

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Offline Attendance Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 10px 10px 0;
+        }
+        button:hover {
+            background: #c82333;
+        }
+        .success {
+            background: #28a745;
+        }
+        .success:hover {
+            background: #218838;
+        }
+        #output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ Clear Offline Attendance Data</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Warning:</strong> This will permanently delete all offline cached data including:
+            <ul>
+                <li>Cached timetable and subject data</li>
+                <li>Offline attendance records</li>
+                <li>Period configurations</li>
+                <li>Student data cache</li>
+            </ul>
+            The system will then force refresh from the database.
+        </div>
+
+        <button onclick="clearTimetableCache()">Clear Timetable Cache</button>
+        <button onclick="clearAttendanceCache()">Clear Attendance Cache</button>
+        <button onclick="clearStudentCache()">Clear Student Cache</button>
+        <button onclick="clearAllOfflineData()" style="background: #dc3545;">🗑️ Clear ALL Offline Data</button>
+        <button onclick="forceRefresh()" class="success">🔄 Force Database Refresh</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const output = document.getElementById('output');
+            output.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+        }
+
+        function clearTimetableCache() {
+            log('🗑️ Clearing timetable and subject cache...');
+            
+            // Clear timetable cache
+            const keys = Object.keys(localStorage);
+            let cleared = 0;
+            
+            keys.forEach(key => {
+                if (key.includes('timetable') || key.includes('subject') || key.includes('period')) {
+                    localStorage.removeItem(key);
+                    cleared++;
+                    log(`  Removed: ${key}`);
+                }
+            });
+            
+            log(`✅ Cleared ${cleared} timetable/subject cache entries`);
+        }
+
+        function clearAttendanceCache() {
+            log('🗑️ Clearing attendance cache...');
+            
+            const keys = Object.keys(localStorage);
+            let cleared = 0;
+            
+            keys.forEach(key => {
+                if (key.includes('attendance') || key.includes('lock') || key.includes('sync')) {
+                    localStorage.removeItem(key);
+                    cleared++;
+                    log(`  Removed: ${key}`);
+                }
+            });
+            
+            log(`✅ Cleared ${cleared} attendance cache entries`);
+        }
+
+        function clearStudentCache() {
+            log('🗑️ Clearing student cache...');
+            
+            const keys = Object.keys(localStorage);
+            let cleared = 0;
+            
+            keys.forEach(key => {
+                if (key.includes('student') || key.includes('class') || key.includes('course')) {
+                    localStorage.removeItem(key);
+                    cleared++;
+                    log(`  Removed: ${key}`);
+                }
+            });
+            
+            log(`✅ Cleared ${cleared} student cache entries`);
+        }
+
+        function clearAllOfflineData() {
+            log('🗑️ CLEARING ALL OFFLINE DATA...');
+            
+            // Clear localStorage completely
+            const totalKeys = localStorage.length;
+            const allKeys = Object.keys(localStorage);
+            
+            localStorage.clear();
+            
+            log(`✅ Cleared ${totalKeys} total localStorage entries`);
+            allKeys.forEach(key => log(`  Removed: ${key}`));
+            
+            // Clear sessionStorage
+            const sessionKeys = sessionStorage.length;
+            sessionStorage.clear();
+            log(`✅ Cleared ${sessionKeys} sessionStorage entries`);
+            
+            // Clear IndexedDB if exists
+            if ('indexedDB' in window) {
+                indexedDB.databases().then(databases => {
+                    databases.forEach(db => {
+                        if (db.name) {
+                            const deleteReq = indexedDB.deleteDatabase(db.name);
+                            deleteReq.onsuccess = () => log(`✅ Cleared IndexedDB: ${db.name}`);
+                        }
+                    });
+                });
+            }
+            
+            log('✅ ALL OFFLINE DATA CLEARED!');
+            log('⚠️ Page will refresh in 3 seconds to force database reload...');
+            
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+        }
+
+        function forceRefresh() {
+            log('🔄 Forcing database refresh...');
+            
+            // Add cache-busting timestamp
+            const timestamp = Date.now();
+            
+            // Clear browser cache for this domain
+            if ('caches' in window) {
+                caches.keys().then(cacheNames => {
+                    cacheNames.forEach(cacheName => {
+                        caches.delete(cacheName);
+                        log(`  Cleared cache: ${cacheName}`);
+                    });
+                });
+            }
+            
+            log('✅ Browser caches cleared');
+            log('🔄 Reloading page with cache-busting...');
+            
+            // Reload with cache busting
+            window.location.href = window.location.href + '?refresh=' + timestamp;
+        }
+
+        // Show current localStorage contents on load
+        window.onload = function() {
+            log('📊 Current localStorage contents:');
+            const keys = Object.keys(localStorage);
+            if (keys.length === 0) {
+                log('  (No data found)');
+            } else {
+                keys.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    const size = new Blob([value]).size;
+                    log(`  ${key}: ${size} bytes`);
+                });
+            }
+            log(`Total: ${keys.length} entries`);
+        };
+    </script>
+</body>
+</html>

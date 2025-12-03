@@ -1,0 +1,117 @@
+Replit Prompt – Timetable-based Subject Attendance Logging with Replit DB and Excel Export
+
+You are building a web app for an Islamic Education System that:
+
+Allows each class to configure its own unique subject-wise timetable.
+
+Logs attendance based on that timetable.
+
+Generates subject-wise attendance sheets in Excel.
+
+Stores data in Replit DB (not Firebase).
+
+Requirements:
+
+🎓 Class-wise Subject Timetable Configuration:
+
+Allow setting timetable per class (PUC 1A, POST 2B, etc.).
+
+Example: PUC 1A has Tajweed on Mon 2nd hour; POST 2B has Fiqh on Tue 4th hour.
+
+Store structure in Replit DB like:
+
+json
+Copy
+Edit
+timetable = {
+  "PUC_1A": {
+    "Monday":   ["AP1", "TJD1", "FQH1"],
+    "Tuesday":  ["FQH1", "TJD1", "AP1"],
+    ...
+  },
+  "POST_2B": {
+    "Monday":   ["QDH2", "TAF2", "FQH2"],
+    ...
+  }
+}
+✅ Attendance Logging Based on Timetable:
+
+On any date, app fetches subject for that period based on weekday and class.
+
+When user takes attendance, it logs it like:
+
+json
+Copy
+Edit
+attendance = {
+  "PUC_1A": {
+    "2025-07-14": {
+      "TJD1": {
+        "period": 2,
+        "students": {
+          "bathi": "P",
+          "aman": "A"
+        }
+      },
+      "FQH1": {...}
+    }
+  }
+}
+📊 Attendance Sheet Generation:
+
+When viewing attendance sheet:
+
+Filter by subject, class, and month.
+
+Count Present (P), Absent (A), Leave (L), Holiday (H).
+
+Use timetable to map which subject was on which date & period.
+
+Show correct total for that subject.
+
+Example:
+
+If FQH1 was scheduled on 3 Mondays in July, only those dates are counted.
+
+Use tabular UI with Excel export.
+
+📁 Excel Export:
+
+Export data to .xlsx:
+
+One row per student.
+
+Columns for each date subject was scheduled.
+
+Legend for P/A/L/H.
+
+🧠 Extra Logic:
+
+“Holiday” if configured for Friday or marked in holiday list.
+
+Attendance should not show if subject was not scheduled that day for that class.
+
+🔄 UI Behavior:
+
+Dropdown to pick: Class → Subject → Month.
+
+Show percentage per subject.
+
+If “All Periods” selected, show merged attendance from all scheduled subjects on those days.
+
+💾 Replit DB Schema:
+Use keys like:
+
+timetable:class_id
+
+attendance:class_id:date
+
+holidays:[year-month] = [“2025-07-12”, “2025-07-19”]
+
+Tools:
+
+Frontend: HTML + JS or React (or Replit webview)
+
+DB: Replit DB
+
+Excel: SheetJS (xlsx library)

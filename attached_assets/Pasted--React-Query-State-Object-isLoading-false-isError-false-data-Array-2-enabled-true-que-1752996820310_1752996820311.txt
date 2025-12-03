@@ -1,0 +1,32 @@
+🔧 React Query State: 
+Object {isLoading: false, isError: false, data: Array(2), enabled: true, queryKey: Array(5)}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 2, filteredCount: 2, filteredNames: Array(2)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+✅ No existing attendance found for pu 1 science A on 2025-07-20 period 1 - ready to take attendance
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔧 React Query State: 
+Object {isLoading: false, isError: false, data: Array(2), enabled: true, queryKey: Array(5)}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 2, filteredCount: 2, filteredNames: Array(2)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔧 React Query State: 
+Object {isLoading: false, isError: false, data: Array(2), enabled: true, queryKey: Array(5)}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 2, filteredCount: 2, filteredNames: Array(2)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "science", section: "A", queryString: "courseType=pu&year=1&courseDivision=science&section=A"}
+🔧 React Query State: 
+Object {isLoading: false, isError: false, data: Array(2), enabled: true, queryKey: Array(5)}
+🔍 Filter Debug: 
+Object {searchTerm: "", totalStudents: 2, filteredCount: 2, filteredNames: Array(2)}
+🎯 Rendering Holiday Banner Check: 
+Object {isHoliday: false, holidayInfo: null, date: "2025-07-20", courseType: "pu"}
+🔄 Starting sync - 0 items to sync

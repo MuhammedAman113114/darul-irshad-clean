@@ -1,0 +1,20 @@
+{
+  "name": "darul-irshad-vercel-api",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Vercel Serverless API for Darul Irshad Student Management",
+  "main": "api/students/index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

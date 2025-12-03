@@ -1,0 +1,112 @@
+# Madrasah Management System - Missed Section Implementation
+
+## 📋 REQUIREMENTS
+Create missed section feature that shows classes where no attendance was taken after their scheduled time has passed.
+
+## 🗄️ DATABASE SCHEMA (Reference)
+```sql
+-- Timetable Table
+CREATE TABLE timetable (
+   id INT PRIMARY KEY,
+   class_id INT,
+   subject_id INT, 
+   teacher_id INT,
+   day_of_week VARCHAR(10),
+   period INT,
+   start_time TIME,
+   end_time TIME,
+   scheduled_date DATE
+);
+
+-- Attendance Records Table  
+CREATE TABLE attendance_records (
+   id INT PRIMARY KEY,
+   class_id INT,
+   subject_id INT,
+   teacher_id INT,
+   period INT,
+   attendance_date DATETIME,
+   student_id INT,
+   status ENUM('present', 'absent')
+);
+🎯 CORE LOGIC TO IMPLEMENT
+Main Query Logic:
+sql-- Find classes where scheduled time has passed but no attendance taken
+SELECT 
+    t.class_id,
+    t.subject_id,
+    t.teacher_id,
+    t.period,
+    t.scheduled_date as missed_date,
+    t.start_time,
+    t.end_time,
+    c.class_name,
+    s.subject_name,
+    te.teacher_name
+FROM timetable t
+LEFT JOIN attendance_records a ON (
+    t.class_id = a.class_id 
+    AND t.subject_id = a.subject_id
+    AND DATE(a.attendance_date) = t.scheduled_date
+    AND a.period = t.period
+)
+LEFT JOIN classes c ON t.class_id = c.id
+LEFT JOIN subjects s ON t.subject_id = s.id  
+LEFT JOIN teachers te ON t.teacher_id = te.id
+WHERE a.id IS NULL  -- No attendance record exists
+AND DATETIME(t.scheduled_date, t.end_time) < NOW()  -- Class time has passed
+ORDER BY t.scheduled_date DESC, t.period;
+🔧 IMPLEMENTATION TASKS
+1. Backend API Endpoint
+javascript// GET /api/missed-sections
+// Optional query params: ?class_id=1&teacher_id=2&subject_id=3&days=30
+2. Frontend Features
+
+Display missed sections in table/card format
+Filter by: Class, Teacher, Subject, Date Range
+Action buttons: "Schedule Makeup", "Mark as Cancelled"
+Real-time updates (refresh every 30 minutes)
+
+3. Additional Features
+
+Count of total missed sections
+Group by class/teacher for better organization
+Export missed sections report
+Notifications for new missed sections
+
+📱 UI COMPONENTS NEEDED
+
+Missed Sections List - Main display component
+Filter Bar - Class, Teacher, Subject dropdowns
+Missed Section Card - Individual missed class display
+Schedule Makeup Modal - For rescheduling missed classes
+Statistics Dashboard - Overview of missed sections
+
+⚡ BONUS FEATURES
+
+Auto-refresh missed sections every 30 mins
+Email notifications to teachers for missed classes
+Bulk operations (schedule multiple makeup classes)
+Integration with school calendar (exclude holidays)
+
+🚀 ACCEPTANCE CRITERIA
+✅ Shows classes only after their scheduled end time has passed
+✅ Real-time detection of missed classes
+✅ No false positives for future/ongoing classes
+✅ Proper filtering and sorting options
+✅ Clean, intuitive user interface
+✅ Mobile-responsive design
+📊 EXAMPLE OUTPUT
+MISSED SECTIONS (Last 30 Days)
+
+┌─────────────────────────────────────────────────────────────┐
+│ 2nd PUC Science A - Physics - Mr. Ahmed                    │
+│ Monday, Jan 15 | 10:00-11:00 AM | Period 3               │
+│ [Schedule Makeup] [Mark Cancelled]                         │
+├─────────────────────────────────────────────────────────────┤
+│ 1st PUC Commerce B - Accountancy - Ms. Fatima            │
+│ Friday, Jan 12 | 2:00-3:00 PM | Period 6                 │
+│ [Schedule Makeup] [Mark Cancelled]                         │
+└─────────────────────────────────────────────────────────────┘
+
+Total Missed: 2 classes

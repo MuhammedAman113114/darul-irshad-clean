@@ -1,0 +1,132 @@
+💡 **Replit-style Prompt**
+
+---
+
+📌 **Prompt Title:** Subject & Timetable Management System for PUC & Post-PUC (Mobile-First UI)
+
+🧹 **Project Type:** React Native (or Expo) + Replit DB
+
+---
+
+🔧 **Core Features to Build:**
+
+### 🏛️ Institution Levels:
+
+#### PUC:
+
+* **Streams:** Commerce (with A & B Sections), Science (no sections)
+* **Default Periods:** 3 periods/day
+
+#### Post-PUC:
+
+* **Years:** 3rd to 7th Year (no sections)
+* **Period Configuration:**
+
+  * 3rd–5th Year: 7 periods/day
+  * 6th–7th Year: 8 periods/day
+
+---
+
+### 🖊️ Subject Management Section:
+
+* Add subject name, subject code, year, course, stream, section (if any)
+* UI: Simple list or table view with add/edit/delete
+* Each stream/class should have independent subject lists
+
+---
+
+### ⏰ Timetable Builder Section (Mobile-First):
+
+* Editable grid/table for weekly timetable
+* **Columns:** Monday to Sunday
+
+  * **Friday = weekly holiday (disabled)**
+  * **Sunday = active working day**
+* **Rows:** Auto-generate based on period config for selected year
+* Allow admin to:
+
+  * Set period name
+  * Choose subject from subject list
+  * Define time slot (start - end time)
+* Responsive layout: Card UI or swipeable rows for mobile view
+
+---
+
+### 🔧 UX:
+
+* Toggle edit/save mode
+* Periods must match subject list
+* Disable Friday globally ("Friday is weekly holiday")
+* On year/stream selection, auto-fill default period count
+* Add/remove periods dynamically (sync with other modules)
+
+---
+
+### 🔄 Integration & Sync (Bi-directional):
+
+* Sync with:
+
+  * ✅ Take Attendance
+  * 📊 History
+  * 🕒 Missed Attendance
+* Auto-fetch period/subject per day per class for Attendance
+* Class attendance pulls period data from timetable builder
+
+---
+
+### 📱 Mobile UX Considerations:
+
+* Sticky top nav: Take Attendance | History | Sheet | Missed | Subject & Timetable
+* Swipeable or collapsible period blocks
+* Section dropdown for PUC Commerce
+* Tooltip for Friday or validation errors
+* Minimal scrolling, collapsible views
+
+---
+
+### ➕ Optional Enhancements:
+
+* Export timetable as PDF
+* Clone previous week's timetable as template
+
+---
+
+### 📊 Replit DB Structure Suggestion:
+
+```json
+/subjects:{year_stream_section} => [ { name, code } ]
+/timetable:{year_stream_section} => {
+  "Monday": [ { periodName, subjectName, startTime, endTime }, ... ],
+  "Tuesday": [...],
+  "Friday": "HOLIDAY",  // Disabled in UI and attendance
+  "Sunday": [...]
+}
+/attendance:{date}:{classId} => [ { periodName, status, studentId }, ... ]
+```
+
+---
+
+### ✅ Constraints:
+
+* Friday = Weekly Holiday (no classes)
+* Sunday = Active day (attendance + timetable allowed)
+* Timetable period validation:
+
+  * Subject must exist
+  * No overlapping time
+* Commerce only = Section A/B (PUC only)
+
+---
+
+### 🔗 Final Note:
+
+Ensure all timetable/subject data automatically impacts:
+
+* Attendance
+* History
+* Missed logs
+* Design clean schema for future extensions (exams, substitutions)
+
+---
+
+Let me know if you want this exported as `.txt` or added into Replit directly.

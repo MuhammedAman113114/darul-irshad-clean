@@ -1,0 +1,9 @@
+{
+  "name": "DarulIrshadMobile",
+  "displayName": "Darul Irshad SMS",
+  "version": "1.0.0",
+  "description": "Student Management System for Darul Irshad",
+  "main": "index.js",
+  "author": "Darul Irshad",
+  "license": "MIT"
+}

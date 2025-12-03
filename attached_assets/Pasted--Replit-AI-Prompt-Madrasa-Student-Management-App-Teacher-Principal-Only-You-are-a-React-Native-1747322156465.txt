@@ -1,0 +1,162 @@
+ Replit AI Prompt — Madrasa Student Management App (Teacher + Principal Only)
+You are a React Native + Firebase developer. Build a Madrasa-focused student management app strictly for Teachers and Principals. No student access is required. The app must follow the structure and features below:
+
+🏫 1. Course Structure & Batches
+PU College (1st & 2nd Year):
+
+Commerce:
+
+1st PU: Batches A, B (customizable).
+
+2nd PU: Batches A, B (customizable).
+
+Science:
+
+1st PU: Single fixed batch.
+
+2nd PU: Single fixed batch (new requirement).
+
+Post-PUC Courses:
+
+Year-wise structure:
+
+3rd–5th Year: Single batch, 7 default periods.
+
+6th–7th Year: Single batch, 8 default periods.
+
+✏️ 2. Batch Customization
+PU Commerce: Add/remove batches (e.g., Batch C).
+
+PU Science: Fixed single batch only.
+
+Custom section names allowed (e.g., "Morning Batch", "Weekend Batch").
+
+⏱️ 3. Period Management
+PU College:
+
+Default: 3 periods/day.
+
+Add/edit/delete periods.
+
+Set start & end times (e.g., 9:00–10:00 AM).
+
+Post-PUC (3rd–7th Years):
+
+Years 3–5: 7 periods/day (default).
+
+Years 6–7: 8 periods/day (default).
+
+Period customization: Add/delete periods, adjust timings.
+
+📋 4. Attendance Management
+All students marked "Present" by default.
+
+Teachers mark "Absent" per period using toggles or checkboxes.
+
+Leave Integration:
+
+Teachers apply leave for students (From–To date, Reason).
+
+System auto-detects absence after leave expiry and shows alerts.
+
+🕌 5. Namaz Tracking
+One-click bulk absent marking for namaz non-participants.
+
+Generate Namaz attendance reports by class/year.
+
+📄 6. Result Upload (PDF)
+Teachers upload PDFs by:
+
+Course (e.g., 2nd PU Science)
+
+Batch (e.g., 1st PU Commerce Batch A)
+
+Students do not access results; only teachers/principals can upload/manage PDFs.
+
+🗨️ 7. Remarks Section
+Teachers add remarks per student with description (e.g., "Needs improvement in Tajweed").
+
+Teacher's name is auto-tagged.
+
+Principals and Teachers can filter remarks by student or batch.
+
+📝 8. Leave Management
+Teachers apply student leave (From–To date, Reason).
+
+System triggers post-leave absence alerts if student continues to miss periods.
+
+📆 9. College Calendar (Principal Only)
+Principal marks monthly holidays (attendance auto-skipped).
+
+Add emergency holidays (e.g., due to floods).
+
+Upload academic calendar (PDF) visible to all teachers.
+
+🔐 10. User Roles
+Principal Login:
+
+Calendar control
+
+Global attendance/view
+
+Period management
+
+Remarks overview
+
+Teacher Login:
+
+Attendance marking
+
+Namaz tracking
+
+Result uploading (PDF)
+
+Remarks entry
+
+Leave submission for students
+
+✅ 11. Feature Checklist
+less
+Copy
+Edit
+[x] Student biodata entry
+[x] Batch management (PU Commerce only)
+[x] Science batches fixed
+[x] Namaz attendance tracking
+[x] Result upload by course/batch (PDF)
+[x] Remarks tagging with teacher name
+[x] Leave application + post-leave absence alert
+[x] Principal/Teacher login roles
+[x] Calendar management (monthly/emergency)
+[x] Period configuration (PU: 3+, Post-PUC: 7/8+)
+🧪 12. Usage Workflow
+🧑‍🏫 Teacher:
+Select course: 1st PU Commerce - Batch A.
+
+Choose period: Period 2 (10:00 AM–11:00 AM).
+
+Mark absent students for that period.
+
+Bulk-mark Namaz absentees.
+
+Upload result PDF for the batch.
+
+Add remarks for students with auto-tagging.
+
+👨‍💼 Principal:
+Set calendar holidays (monthly/emergency).
+
+Adjust periods for any course.
+
+View attendance/namaz reports by batch or year.
+
+Review remarks and student trends.
+
+📱 Tech Stack Recommendations
+Frontend: React Native (mobile-first).
+
+Backend: Firebase Firestore (real-time DB) + Firebase Storage (PDFs).
+
+Role-based navigation (Principal, Teacher).
+
+Responsive layout for tablets and phones.

@@ -1,0 +1,21 @@
+studentsQuery is not defined
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "", section: "A", queryString: "courseType=pu&year=1"}
+🔍 Student Query Parameters: 
+Object {courseType: "pu", year: "1", courseDivision: "", section: "A", queryString: "courseType=pu&year=1"}
+studentsQuery is not defined
+The above error occurred in the <AttendanceScreen> component:
+
+    at AttendanceScreen (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/src/components/attendance/AttendanceScreen.tsx:56:44)
+    at HomePage (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/src/pages/HomePageNew.tsx:1241:28)
+    at Route (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=e6147429:323:16)
+    at Switch (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=e6147429:379:17)
+    at Router
+    at Provider (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-M3NVYRND.js?v=e6147429:48:15)
+    at TooltipProvider (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=e6147429:59:5)
+    at AuthProvider (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/src/hooks/use-auth.ts:13:32)
+    at QueryClientProvider (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=e6147429:2805:3)
+    at App (https://f6c42235-ef99-42d8-a891-c6839de45a3b-00-32caj6809hgpd.picard.replit.dev/src/App.tsx?v=sW12X4qMjcsioQuE7pgJR:86:49)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.

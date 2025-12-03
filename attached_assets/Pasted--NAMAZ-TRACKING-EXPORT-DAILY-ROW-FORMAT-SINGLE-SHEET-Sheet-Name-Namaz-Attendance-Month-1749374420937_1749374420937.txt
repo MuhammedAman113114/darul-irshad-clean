@@ -1,0 +1,62 @@
+📤 NAMAZ TRACKING EXPORT - DAILY ROW FORMAT (SINGLE SHEET)
+
+✅ Sheet Name:
+Namaz_Attendance_<Month>_<Year>
+
+🔢 Structure (Columns)
+
+| Column Name       | Description                          |
+|-------------------|--------------------------------------|
+| Date              | E.g., 2025-06-01                     |
+| Day               | E.g., Sunday                         |
+| Student Name      | Full name of the student             |
+| Class             | E.g., 1st PU, 2nd PU                 |
+| Section           | A/B/C (blank if not applicable)      |
+| Fajr              | P (Present), A (Absent), L (Leave)   |
+| Dhuhr             | P / A / L                            |
+| Asr               | P / A / L                            |
+| Maghrib           | P / A / L                            |
+| Isha              | P / A / L                            |
+| Emergency Leave   | ✓ or E.L. if emergency leave applied |
+
+🔄 Row Count Calculation:
+- 200 students × 30 days = 6,000 rows
+- 1 row per student per day
+
+🧠 Why This Format Works:
+- Excel supports up to 1M+ rows — this is optimal
+- Easy to apply:
+  ➤ Filters: By date, class, prayer, or leave
+  ➤ Pivot summaries: % attendance, top absentees, most leaves
+
+🎨 Visual Enhancements (Optional):
+- P → Green
+- A → Red
+- L → Yellow
+- E.L. → Orange
+- Apply conditional formatting for visual dashboards
+
+🧾 Example Preview (Top Rows)
+
+| Date       | Day     | Student Name | Class   | Section | Fajr | Dhuhr | Asr | Maghrib | Isha | Emergency Leave |
+|------------|---------|--------------|---------|---------|------|--------|-----|----------|------|------------------|
+| 2025-06-01 | Sunday  | Ahmad Khan   | 1st PU  | A       | P    | P      | A   | P        | P    |                  |
+| 2025-06-01 | Sunday  | Bilal Umar   | 2nd PU  | B       | A    | P      | P   | A        | A    | ✓                |
+| 2025-06-02 | Monday  | Ahmad Khan   | 1st PU  | A       | P    | P      | P   | P        | P    |                  |
+
+📊 Optional Summary Sheet (Tab 2):
+
+| Student Name | Total P | Total A | Total L | Emergency Leaves |
+|--------------|---------|---------|---------|------------------|
+| Ahmad Khan   | 130     | 10      | 5       | 1                |
+| Bilal Umar   | 115     | 20      | 10      | 2                |
+
+🔗 Source:
+- Real-time sync from: 
+  ✅ Namaz Tracking Module
+  ✅ Calendar Module (for Leave, Emergency Leave)
+  ✅ Student Management (for Name, Class, Section)
+
+💡 Ideal For:
+- Auditable prayer tracking
+- Pattern analysis per student

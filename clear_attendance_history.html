@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Attendance History</title>
+</head>
+<body>
+    <h2>Clear Attendance History Data</h2>
+    <button onclick="clearAttendanceData()">Clear All Attendance History</button>
+    <div id="result"></div>
+
+    <script>
+        function clearAttendanceData() {
+            let clearedCount = 0;
+            let foundKeys = [];
+
+            // Get all localStorage keys and filter for attendance-related ones
+            const allKeys = Object.keys(localStorage);
+            
+            // Find keys that start with 'attendance' or contain attendance data
+            const attendanceKeys = allKeys.filter(key => 
+                key.startsWith('attendance_') || 
+                key.startsWith('attendance_history_') ||
+                key.includes('attendance') ||
+                key.includes('Attendance') ||
+                key.includes('ATTENDANCE')
+            );
+
+            // Remove each attendance-related key
+            attendanceKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    foundKeys.push(key);
+                    localStorage.removeItem(key);
+                    clearedCount++;
+                    console.log(`Removed: ${key}`);
+                }
+            });
+
+            // Also check for any missed attendance keys
+            const missedKeys = allKeys.filter(key => 
+                key.includes('missed') || key.includes('period_config')
+            );
+            
+            missedKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    foundKeys.push(key);
+                    localStorage.removeItem(key);
+                    clearedCount++;
+                    console.log(`Removed missed/config key: ${key}`);
+                }
+            });
+
+            document.getElementById('result').innerHTML = `
+                <h3>✅ Cleared ${clearedCount} keys:</h3>
+                <ul style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+                    ${foundKeys.map(key => `<li style="margin-bottom: 5px; font-family: monospace;">${key}</li>`).join('')}
+                </ul>
+                <p><strong style="color: green;">✅ All attendance history data cleared!</strong></p>
+                <p><strong style="color: blue;">🔄 Please refresh your main application now to see empty history.</strong></p>
+                <br>
+                <button onclick="window.close()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px;">Close Window</button>
+            `;
+        }
+
+        // Auto-clear on load
+        window.onload = function() {
+            clearAttendanceData();
+        }
+    </script>
+</body>
+</html>

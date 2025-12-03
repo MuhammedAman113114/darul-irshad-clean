@@ -1,0 +1,27 @@
+# React Native specific
+*.pbxproj merge=union
+
+# Android specific
+*.gradle linguist-language=Gradle
+*.java linguist-language=Java
+*.kt linguist-language=Kotlin
+
+# iOS specific (for future)
+*.h linguist-language=Objective-C
+*.m linguist-language=Objective-C
+*.mm linguist-language=Objective-C++
+*.swift linguist-language=Swift
+
+# JavaScript/TypeScript
+*.js linguist-language=JavaScript
+*.jsx linguist-language=JavaScript
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+
+# Documentation
+*.md linguist-documentation=true
+
+# Generated files
+android/app/build/ linguist-generated=true
+android/build/ linguist-generated=true
+node_modules/ linguist-vendored=true
