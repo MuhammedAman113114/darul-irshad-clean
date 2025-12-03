@@ -21,7 +21,7 @@ export const students = pgTable("students", {
   courseDivision: text("course_division"), // "commerce" or "science" for PU, null for post-pu
   year: text("year").notNull(), // "1" to "7" (1-2 for PU, 3-7 for Post-PUC)
   batch: text("batch"), // "a", "b", "c", etc. for Commerce, null for Science & Post-PUC
-  dob: text("dob").notNull(),
+  dob: text("dob"), // Optional - date of birth
   bloodGroup: text("blood_group"), // A+, A-, B+, B-, AB+, AB-, O+, O-
   fatherName: text("father_name"),
   motherName: text("mother_name"),
