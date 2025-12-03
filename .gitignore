@@ -51,3 +51,5 @@ vite.config.ts.*
 
 # Git
 .git/config.lock
+.vercel
+.env*.local

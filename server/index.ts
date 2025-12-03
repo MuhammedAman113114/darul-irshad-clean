@@ -40,18 +40,6 @@ async function startServer() {
     // Demo data insertion disabled - use Student Manager to add real students
     // await insertDemoData();
     
-    const port = parseInt(process.env.PORT || "5000", 10);
-    server.listen(port, "0.0.0.0", () => {
-      const formattedTime = new Date().toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      });
-
-      console.log(`${formattedTime} [express] serving on port ${port}`);
-    });
-
     // Check if we're in production by looking for built files
     const distPath = path.resolve(import.meta.dirname, "public");
     const isProduction = fs.existsSync(distPath) && process.env.NODE_ENV === "production";
@@ -63,6 +51,23 @@ async function startServer() {
       console.log("Running in development mode with Vite dev server");
       await setupVite(app, server);
     }
+    
+    // Only start listening if not in Vercel serverless environment
+    if (!process.env.VERCEL) {
+      const port = parseInt(process.env.PORT || "5000", 10);
+      server.listen(port, "0.0.0.0", () => {
+        const formattedTime = new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        });
+
+        console.log(`${formattedTime} [express] serving on port ${port}`);
+      });
+    }
+    
+    return app;
   } catch (error) {
     console.error("Failed to start server:", error);
     console.error("Error stack:", error.stack);
@@ -70,7 +75,23 @@ async function startServer() {
   }
 }
 
-startServer().catch((error) => {
-  console.error("Unhandled server startup error:", error);
-  process.exit(1);
-});
+// For Vercel serverless
+if (process.env.VERCEL) {
+  registerRoutes(app).then(() => {
+    const distPath = path.resolve(import.meta.dirname, "public");
+    if (fs.existsSync(distPath)) {
+      serveStatic(app);
+    }
+  });
+}
+
+// For traditional hosting
+if (!process.env.VERCEL) {
+  startServer().catch((error) => {
+    console.error("Unhandled server startup error:", error);
+    process.exit(1);
+  });
+}
+
+// Export for Vercel
+export default app;
