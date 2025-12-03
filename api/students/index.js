@@ -2,6 +2,16 @@
 // POST /api/students - Create new student
 import { neon } from '@neondatabase/serverless';
 
+// Convert snake_case to camelCase
+function toCamelCase(obj) {
+  const result = {};
+  for (const key in obj) {
+    const camelKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+    result[camelKey] = obj[key];
+  }
+  return result;
+}
+
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -49,8 +59,16 @@ export default async function handler(req, res) {
         params.push(status);
       }
       
+      query += ' ORDER BY id DESC';
+      
       const students = await sql(query, params);
-      return res.status(200).json(students);
+      
+      // Convert to camelCase for frontend
+      const camelCaseStudents = students.map(toCamelCase);
+      
+      console.log(`Found ${camelCaseStudents.length} students with filters:`, { courseType, year, courseDivision, batch });
+      
+      return res.status(200).json(camelCaseStudents);
     }
 
     if (req.method === 'POST') {
@@ -60,19 +78,25 @@ export default async function handler(req, res) {
         address, aadharNumber, photoUrl, status
       } = req.body;
       
+      console.log('Creating student:', { name, rollNo, courseType, courseDivision, year, batch });
+      
       const result = await sql`
         INSERT INTO students (
           name, roll_no, course_type, course_division, year, batch,
           dob, blood_group, father_name, mother_name, contact_1, contact_2,
           address, aadhar_number, photo_url, status, created_at
         ) VALUES (
-          ${name}, ${rollNo}, ${courseType}, ${courseDivision}, ${year}, ${batch},
-          ${dob}, ${bloodGroup}, ${fatherName}, ${motherName}, ${contact1}, ${contact2},
-          ${address}, ${aadharNumber}, ${photoUrl}, ${status || 'active'}, NOW()
+          ${name}, ${rollNo}, ${courseType}, ${courseDivision || null}, ${year}, ${batch || null},
+          ${dob || null}, ${bloodGroup || null}, ${fatherName || null}, ${motherName || null}, 
+          ${contact1 || null}, ${contact2 || null}, ${address || null}, ${aadharNumber || null}, 
+          ${photoUrl || null}, ${status || 'active'}, NOW()
         ) RETURNING *
       `;
       
-      return res.status(201).json(result[0]);
+      const newStudent = toCamelCase(result[0]);
+      console.log('Student created:', newStudent);
+      
+      return res.status(201).json(newStudent);
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
