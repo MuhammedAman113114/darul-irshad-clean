@@ -31,46 +31,74 @@ app.use((req, res, next) => {
   next();
 });
 
-// Register routes and start server
-async function startServer() {
-  try {
-    console.log("Starting server...");
-    const server = await registerRoutes(app);
-    
-    // Demo data insertion disabled - use Student Manager to add real students
-    // await insertDemoData();
-    
-    const port = parseInt(process.env.PORT || "5000", 10);
-    server.listen(port, "0.0.0.0", () => {
-      const formattedTime = new Date().toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      });
+// Initialize app for both Vercel and traditional hosting
+let appInitialized = false;
 
-      console.log(`${formattedTime} [express] serving on port ${port}`);
-    });
-
+async function initializeApp() {
+  if (!appInitialized) {
+    await registerRoutes(app);
+    
     // Check if we're in production by looking for built files
     const distPath = path.resolve(import.meta.dirname, "public");
-    const isProduction = fs.existsSync(distPath) && process.env.NODE_ENV === "production";
+    const isProduction = fs.existsSync(distPath);
     
     if (isProduction) {
       console.log("Running in production mode with static files");
       serveStatic(app);
-    } else {
-      console.log("Running in development mode with Vite dev server");
-      await setupVite(app, server);
     }
-  } catch (error) {
-    console.error("Failed to start server:", error);
-    console.error("Error stack:", error.stack);
-    process.exit(1);
+    
+    appInitialized = true;
   }
+  return app;
 }
 
-startServer().catch((error) => {
-  console.error("Unhandled server startup error:", error);
-  process.exit(1);
-});
+// For Vercel - initialize immediately
+if (process.env.VERCEL) {
+  await initializeApp();
+}
+
+// For traditional hosting - start server
+if (!process.env.VERCEL) {
+  async function startServer() {
+    try {
+      console.log("Starting server...");
+      const server = await registerRoutes(app);
+      
+      const port = parseInt(process.env.PORT || "5000", 10);
+      server.listen(port, "0.0.0.0", () => {
+        const formattedTime = new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        });
+
+        console.log(`${formattedTime} [express] serving on port ${port}`);
+      });
+
+      // Check if we're in production by looking for built files
+      const distPath = path.resolve(import.meta.dirname, "public");
+      const isProduction = fs.existsSync(distPath) && process.env.NODE_ENV === "production";
+      
+      if (isProduction) {
+        console.log("Running in production mode with static files");
+        serveStatic(app);
+      } else {
+        console.log("Running in development mode with Vite dev server");
+        await setupVite(app, server);
+      }
+    } catch (error) {
+      console.error("Failed to start server:", error);
+      console.error("Error stack:", error.stack);
+      process.exit(1);
+    }
+  }
+
+  startServer().catch((error) => {
+    console.error("Unhandled server startup error:", error);
+    process.exit(1);
+  });
+}
+
+// Export the app for Vercel
+export default app;
