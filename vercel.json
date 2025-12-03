@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "builds": [
+  "buildCommand": "npm run build && esbuild server/server-wrapper.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/server-wrapper.js",
+  "rewrites": [
     {
-      "src": "package.json",
-      "use": "@vercel/node"
+      "source": "/(.*)",
+      "destination": "/api"
     }
   ]
 }
