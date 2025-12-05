@@ -1,17 +1,22 @@
- import { Pool, neonConfig } from '@neondatabase/serverless';
+import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
 // Configure Neon for serverless environment with more robust settings
 neonConfig.webSocketConstructor = ws;
-neonConfig.pipelineConnect = false;
+neonConfig.pipelineConnect = "password";
 neonConfig.useSecureWebSocket = true;
 neonConfig.pipelineTLS = false;
 
 // Check if DATABASE_URL is set, if not use JSON storage mode
 const DATABASE_URL = process.env.DATABASE_URL;
-const USE_JSON_STORAGE = !DATABASE_URL || DATABASE_URL.includes('username:password');
+// Check if it's a placeholder/example URL
+const isPlaceholder = !DATABASE_URL || 
+  DATABASE_URL === 'postgresql://username:password@host:5432/database_name' ||
+  DATABASE_URL.includes('@host:5432') ||
+  DATABASE_URL === 'postgresql://username:password@host:5432/database_name?sslmode=require';
+const USE_JSON_STORAGE = isPlaceholder;
 
 if (USE_JSON_STORAGE) {
   console.warn('⚠️  DATABASE_URL not configured. Running in JSON storage mode.');

@@ -59,20 +59,84 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      const { studentId, date, prayer, status } = req.body;
+      const { date, prayer, students } = req.body;
       
       const sessionCookie = req.headers.cookie?.split(';').find(c => c.trim().startsWith('session='));
       const session = JSON.parse(Buffer.from(sessionCookie.split('=')[1], 'base64').toString());
       
+      // Handle bulk upload (array of students)
+      if (Array.isArray(students)) {
+        console.log(`📤 Recording namaz for ${students.length} students: ${prayer} on ${date}`);
+        
+        const results = [];
+        for (const student of students) {
+          try {
+            // Check if record exists
+            const existing = await sql`
+              SELECT id FROM namaz_attendance 
+              WHERE student_id = ${student.id} AND date = ${date} AND prayer = ${prayer}
+            `;
+            
+            if (existing.length > 0) {
+              // Update existing record
+              const result = await sql`
+                UPDATE namaz_attendance 
+                SET status = ${student.status}, created_by = ${session.user.id}
+                WHERE student_id = ${student.id} AND date = ${date} AND prayer = ${prayer}
+                RETURNING *
+              `;
+              results.push(toCamelCase(result[0]));
+            } else {
+              // Insert new record
+              const result = await sql`
+                INSERT INTO namaz_attendance (
+                  student_id, date, prayer, status, created_by, created_at
+                ) VALUES (
+                  ${student.id}, ${date}, ${prayer}, ${student.status}, ${session.user.id}, NOW()
+                ) RETURNING *
+              `;
+              results.push(toCamelCase(result[0]));
+            }
+          } catch (error) {
+            console.error(`Failed to record for student ${student.id}:`, error);
+          }
+        }
+        
+        console.log(`✅ Recorded ${results.length}/${students.length} namaz records`);
+        return res.status(201).json({ 
+          success: true, 
+          count: results.length,
+          records: results 
+        });
+      }
+      
+      // Handle single student (legacy support)
+      const { studentId, status } = req.body;
       console.log('Recording namaz:', { studentId, date, prayer, status });
       
-      const result = await sql`
-        INSERT INTO namaz_attendance (
-          student_id, date, prayer, status, created_by, created_at
-        ) VALUES (
-          ${studentId}, ${date}, ${prayer}, ${status}, ${session.user.id}, NOW()
-        ) RETURNING *
+      // Check if record exists
+      const existing = await sql`
+        SELECT id FROM namaz_attendance 
+        WHERE student_id = ${studentId} AND date = ${date} AND prayer = ${prayer}
       `;
+      
+      let result;
+      if (existing.length > 0) {
+        result = await sql`
+          UPDATE namaz_attendance 
+          SET status = ${status}, created_by = ${session.user.id}
+          WHERE student_id = ${studentId} AND date = ${date} AND prayer = ${prayer}
+          RETURNING *
+        `;
+      } else {
+        result = await sql`
+          INSERT INTO namaz_attendance (
+            student_id, date, prayer, status, created_by, created_at
+          ) VALUES (
+            ${studentId}, ${date}, ${prayer}, ${status}, ${session.user.id}, NOW()
+          ) RETURNING *
+        `;
+      }
       
       return res.status(201).json(toCamelCase(result[0]));
     }

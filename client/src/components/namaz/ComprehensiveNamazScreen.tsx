@@ -282,15 +282,12 @@ export default function ComprehensiveNamazScreen({ onBack, role }: NamazScreenPr
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Debug holiday loading
+  // Debug holiday loading (only log errors)
   useEffect(() => {
-    console.log('🎯 [NAMAZ] Holiday Query State:', {
-      holidaysLoading,
-      holidaysError,
-      holidaysLength: holidays.length,
-      holidaysData: holidays
-    });
-  }, [holidays, holidaysLoading, holidaysError]);
+    if (holidaysError) {
+      console.error('❌ [NAMAZ] Holiday Query Error:', holidaysError);
+    }
+  }, [holidaysError]);
 
   // Function to check if current date is a holiday (consistent with attendance module)
   const checkIfHoliday = (dateToCheck: string) => {
@@ -808,8 +805,6 @@ export default function ComprehensiveNamazScreen({ onBack, role }: NamazScreenPr
 
   // Check if attendance is locked using the new namaz lock service
   const isAttendanceLocked = namazLockService.isPrayerLocked(date, prayer);
-  
-  console.log(`🔒 Namaz lock status for ${prayer} on ${date}: ${isAttendanceLocked ? 'LOCKED' : 'UNLOCKED'}`);
 
   // Helper function to check if a prayer is completed (locked)
   const isPrayerCompleted = (prayerName: string) => {
@@ -885,9 +880,8 @@ export default function ComprehensiveNamazScreen({ onBack, role }: NamazScreenPr
         }
       });
       setStudentStatuses(currentStatuses);
-      console.log(`🔄 Filter changed - added new students as absent without resetting existing statuses`);
     }
-  }, [filteredStudents, prayer, date, dataLoadKey, studentStatuses]);
+  }, [filteredStudents, prayer, date, dataLoadKey]);
 
 
 
@@ -1081,7 +1075,57 @@ export default function ComprehensiveNamazScreen({ onBack, role }: NamazScreenPr
               <p className="text-sm text-emerald-100">Comprehensive Prayer Management</p>
             </div>
           </div>
-          <NetworkStatusIndicator />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={async () => {
+                const button = document.activeElement as HTMLButtonElement;
+                const originalText = button.innerHTML;
+                
+                try {
+                  // Show loading state
+                  button.innerHTML = '<svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Uploading...';
+                  button.disabled = true;
+                  
+                  const { namazSync } = await import('@/lib/namazSyncService');
+                  const result = await namazSync.syncToDatabase();
+                  
+                  if (result.total === 0) {
+                    toast({
+                      title: "No Data to Upload",
+                      description: "All namaz data is already synced to database",
+                    });
+                  } else if (result.success === result.total) {
+                    toast({
+                      title: "✅ Upload Successful!",
+                      description: `Successfully uploaded ${result.success} namaz records to database. Data is now accessible from all devices!`,
+                    });
+                  } else {
+                    toast({
+                      title: "Partial Upload",
+                      description: `Uploaded ${result.success}/${result.total} records. ${result.failed} failed.`,
+                      variant: "destructive"
+                    });
+                  }
+                } catch (error) {
+                  console.error('Upload error:', error);
+                  toast({
+                    title: "Upload Failed",
+                    description: "Failed to upload data to database. Please check your internet connection and try again.",
+                    variant: "destructive"
+                  });
+                } finally {
+                  button.innerHTML = originalText;
+                  button.disabled = false;
+                }
+              }}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 transition-colors text-sm font-medium"
+            >
+              <Database className="h-4 w-4" />
+              <span className="hidden sm:inline">Upload to DB</span>
+              <span className="sm:hidden">📤</span>
+            </button>
+            <NetworkStatusIndicator />
+          </div>
         </div>
       </div>
 

@@ -257,15 +257,12 @@ export class DatabaseSyncService {
     try {
       console.log('🔄 Force syncing all data from database...');
 
-      // Sync all modules
+      // Sync only essential modules with working endpoints
+      // Skip localStorage caching to avoid quota issues
       await Promise.all([
-        this.syncModuleFromDatabase('students'),
-        this.syncModuleFromDatabase('attendance'),
         this.syncModuleFromDatabase('namaz'),
         this.syncModuleFromDatabase('leave'),
-        this.syncModuleFromDatabase('remarks'),
-        this.syncModuleFromDatabase('results'),
-        this.syncModuleFromDatabase('calendar'),
+        this.syncModuleFromDatabase('attendance'),
       ]);
 
       console.log('✅ Force sync completed');

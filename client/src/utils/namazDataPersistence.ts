@@ -85,6 +85,29 @@ export class NamazDataPersistence {
     return Object.keys(allData).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
   }
 
+  // Get all attendance records in array format for syncing
+  static getAllAttendance(): Array<{ date: string; prayer: string; students: { [name: string]: string } }> {
+    const allData = this.getAllData();
+    const records: Array<{ date: string; prayer: string; students: { [name: string]: string } }> = [];
+    
+    Object.keys(allData).forEach(date => {
+      Object.keys(allData[date]).forEach(prayer => {
+        records.push({
+          date,
+          prayer,
+          students: allData[date][prayer]
+        });
+      });
+    });
+    
+    return records;
+  }
+
+  // Get attendance for specific date and prayer (alias for compatibility)
+  static getAttendance(date: string, prayer: string): { [studentName: string]: string } {
+    return this.getAttendanceForDateAndPrayer(date, prayer);
+  }
+
   // Sync to database
   static async syncToDatabase(): Promise<{ success: number; errors: number }> {
     const allData = this.getAllData();

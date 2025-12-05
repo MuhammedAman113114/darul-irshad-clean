@@ -31,7 +31,14 @@ export const NetworkStatusIndicator: React.FC = () => {
   const handleForceSync = async () => {
     if (status.isOnline && !status.syncInProgress) {
       try {
+        // First, upload local namaz data to database
+        const { namazSync } = await import('@/lib/namazSyncService');
+        const result = await namazSync.syncToDatabase();
+        console.log(`📤 Uploaded ${result.success}/${result.total} namaz records to database`);
+        
+        // Then, pull latest data from database
         await databaseSync.forceSyncFromDatabase();
+        console.log('📥 Downloaded latest data from database');
       } catch (error) {
         console.error('Force sync failed:', error);
       }

@@ -223,7 +223,6 @@ export const exportAttendanceToExcel = async (
           
           dataRow.push(mark);
         }
-        }
         
         // Add summary columns
         dataRow.push(periodPresent);

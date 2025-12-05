@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { type Request, type Response } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic } from "./vite";
