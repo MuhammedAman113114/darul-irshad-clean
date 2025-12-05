@@ -1,29 +1,16 @@
-# Keep only essential API endpoints (12 max for Hobby plan)
-# Core authentication and data
-!api/auth/login.js
-!api/auth/me.js
-!api/students/index.js
-!api/attendance/index.js
-!api/namaz-attendance/index.js
-!api/results/index.js
-!api/remarks/index.js
-!api/leaves/index.js
-!api/subjects/index.js
-!api/timetable/index.js
-!api/holidays/index.js
-!api/missed-sections/queue.js
+# Ignore all API files first
+api/**
 
-# Ignore all other API files
-api/**/*.js
-!api/auth/login.js
-!api/auth/me.js
-!api/students/index.js
-!api/attendance/index.js
-!api/namaz-attendance/index.js
-!api/results/index.js
-!api/remarks/index.js
-!api/leaves/index.js
-!api/subjects/index.js
-!api/timetable/index.js
-!api/holidays/index.js
-!api/missed-sections/queue.js
+# Then include only essential endpoints (12 max for Hobby plan)
+!api/auth/
+!api/students/
+!api/attendance/
+!api/namaz-attendance/
+!api/leaves/
+!api/subjects/
+!api/timetable/
+!api/missed-sections/
+!api/holidays.js
+!api/remarks.js
+!api/results.js
+!api/lib/
