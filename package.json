@@ -7,8 +7,8 @@
     "dev": "tsx server/index.ts",
     "build": "vite build",
     "build:server": "esbuild server/index.ts --platform=node --bundle --format=esm --outdir=dist --external:ws --external:@neondatabase/serverless",
-    "start": "NODE_ENV=production tsx server/index.ts",
-    "start:render": "NODE_ENV=production node server/index.render-api.js",
+    "start": "NODE_ENV=production node server/index.render-api.js",
+    "start:local": "NODE_ENV=production tsx server/index.ts",
     "start:dist": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push"
