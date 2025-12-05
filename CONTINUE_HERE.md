@@ -44,7 +44,7 @@ Follow the **RENDER_DEPLOYMENT_GUIDE.md** file I just created. Here's the quick 
    NODE_ENV=production
    PORT=3001
    FRONTEND_URL=https://darul-irshad-clean.vercel.app
-   SESSION_SECRET=your-random-secret-key-here
+   SESSION_SECRET=372ffc63d7ba7a7ef171cacffae91df3
    DATABASE_URL=postgresql://neondb_owner:npg_rjqETK2lFXv9@ep-long-field-a4tflv7b-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
    ```
 
