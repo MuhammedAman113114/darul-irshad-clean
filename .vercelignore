@@ -1,0 +1,9 @@
+# Ignore API folder - API is deployed on Render.com
+api/
+
+# Ignore server folder - not needed for frontend-only deployment
+server/
+
+# Ignore other backend files
+*.render.js
+render.yaml
