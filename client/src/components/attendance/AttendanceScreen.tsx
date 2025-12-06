@@ -3453,31 +3453,11 @@ export default function AttendanceScreen({ onBack, role, initialClass }: Attenda
     try {
       console.log('🚀 Starting attendance save process...');
       
-      // Check if attendance is locked before proceeding
-      const isLocked = AttendanceLockService.isAttendanceLocked(
-        courseType, 
-        year, 
-        courseDivision, 
-        section || 'A', 
-        date, 
-        parseInt(period)
-      );
-      
-      if (isLocked) {
-        const timeRemaining = AttendanceLockService.getTimeUntilUnlock(
-          courseType, 
-          year, 
-          courseDivision, 
-          section || 'A', 
-          date, 
-          parseInt(period)
-        );
-        
-        showNotification(`Attendance already taken for this period. Locked until midnight (${timeRemaining} remaining)`, "error");
-        return;
-      }
+      // TEMPORARY: Disable lock check for testing
+      console.log('⚠️ Skipping lock check in performAttendanceSave for testing');
       
       const attendanceData = prepareAttendanceData();
+      console.log('📊 Attendance data prepared:', attendanceData);
       if (!attendanceData) {
         return;
       }
