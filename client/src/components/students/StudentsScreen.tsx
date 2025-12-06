@@ -77,14 +77,17 @@ export default function StudentsScreen({ onBack, role }: StudentsScreenProps) {
   // Update student mutation
   const updateStudentMutation = useMutation({
     mutationFn: async ({ id, studentData }: { id: number; studentData: Partial<Student> }) => {
-      console.log("🚀 Frontend: Sending PUT request to update student");
+      console.log("🚀 Frontend: Sending PATCH request to update student");
       console.log("📝 Student ID:", id);
       console.log("📝 Student data being sent:", studentData);
       
-      const response = await fetch(`/api/students/${id}`, {
-        method: 'PUT',
+      const response = await fetch('/api/students', {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(studentData),
+        body: JSON.stringify({
+          id,
+          ...studentData
+        }),
       });
       
       console.log("📡 Response status:", response.status);

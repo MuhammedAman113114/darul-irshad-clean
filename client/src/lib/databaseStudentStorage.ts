@@ -147,12 +147,15 @@ class DatabaseStudentStorage {
     try {
       console.log("📝 Updating student in database:", studentId, updates);
 
-      const response = await fetch(`/api/students/${studentId}`, {
+      const response = await fetch('/api/students', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify({
+          id: studentId,
+          ...updates
+        }),
       });
 
       if (!response.ok) {
