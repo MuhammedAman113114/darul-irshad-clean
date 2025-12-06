@@ -3357,19 +3357,10 @@ export default function AttendanceScreen({ onBack, role, initialClass }: Attenda
     const lockStatus = checkAttendanceLock(date, period);
     console.log('🔒 Lock status:', lockStatus);
     
-    // TEMPORARY: Allow override for testing - remove in production
+    // TEMPORARY: Disable lock check for testing - remove in production
     if (lockStatus.isLocked && !lockStatus.canEdit) {
-      console.log('⚠️ Lock detected but allowing override for testing');
-      // Clear the lock to allow save
-      AttendanceLockService.unlockAttendance(
-        courseType,
-        year,
-        courseDivision,
-        section || 'A',
-        date,
-        parseInt(period)
-      );
-      console.log('🔓 Lock cleared, proceeding with save');
+      console.log('⚠️ Lock detected but bypassing for testing');
+      // Don't return - allow save to proceed
     }
     
     // Step 1: Pre-attendance validation
