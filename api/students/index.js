@@ -32,7 +32,10 @@ export default async function handler(req, res) {
     const sql = neon(process.env.DATABASE_URL);
 
     if (req.method === 'GET') {
-      const { courseType, year, courseDivision, batch, status } = req.query;
+      const { courseType, year, courseDivision, batch, section, status } = req.query;
+      
+      // Accept both 'batch' and 'section' parameters (they mean the same thing)
+      const sectionFilter = batch || section;
       
       let query = 'SELECT * FROM students WHERE 1=1';
       const params = [];
@@ -50,9 +53,9 @@ export default async function handler(req, res) {
         query += ` AND course_division = $${paramIndex++}`;
         params.push(courseDivision);
       }
-      if (batch) {
+      if (sectionFilter) {
         query += ` AND batch = $${paramIndex++}`;
-        params.push(batch);
+        params.push(sectionFilter);
       }
       if (status) {
         query += ` AND status = $${paramIndex++}`;
