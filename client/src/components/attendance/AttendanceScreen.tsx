@@ -4751,7 +4751,22 @@ export default function AttendanceScreen({ onBack, role, initialClass }: Attenda
                 <button 
                   className="fixed bottom-6 right-6 z-10 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white transition-transform hover:scale-105 bg-[#005c83]"
                   aria-label="Save attendance"
-                  onClick={isHoliday || (isAttendanceLocked && !canEditFromHistory) || completedPeriods.has(period) ? undefined : saveAttendance}
+                  onClick={() => {
+                    console.log('🔘 Save button clicked!', {
+                      isHoliday,
+                      isAttendanceLocked,
+                      canEditFromHistory,
+                      completedPeriodsHasPeriod: completedPeriods.has(period),
+                      period,
+                      completedPeriods: Array.from(completedPeriods),
+                      willSave: !(isHoliday || (isAttendanceLocked && !canEditFromHistory) || completedPeriods.has(period))
+                    });
+                    if (!(isHoliday || (isAttendanceLocked && !canEditFromHistory) || completedPeriods.has(period))) {
+                      saveAttendance();
+                    } else {
+                      console.log('❌ Save blocked by conditions');
+                    }
+                  }}
                   disabled={isHoliday || (isAttendanceLocked && !canEditFromHistory) || completedPeriods.has(period)}
                 >
                   {completedPeriods.has(period) ? (
