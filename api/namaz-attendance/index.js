@@ -31,30 +31,41 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const { date, prayer, studentId, status } = req.query;
       
-      let query = 'SELECT * FROM namaz_attendance WHERE 1=1';
-      const params = [];
-      let paramIndex = 1;
+      // Use Neon SQL template syntax for proper parameterization
+      let records;
       
-      if (date) {
-        query += ` AND date = $${paramIndex++}`;
-        params.push(date);
-      }
-      if (prayer) {
-        query += ` AND prayer = $${paramIndex++}`;
-        params.push(prayer);
-      }
-      if (studentId) {
-        query += ` AND student_id = $${paramIndex++}`;
-        params.push(parseInt(studentId));
-      }
-      if (status) {
-        query += ` AND status = $${paramIndex++}`;
-        params.push(status);
+      if (date && prayer && studentId) {
+        records = await sql`
+          SELECT * FROM namaz_attendance 
+          WHERE date = ${date} AND prayer = ${prayer} AND student_id = ${parseInt(studentId)}
+          ORDER BY date DESC, prayer ASC
+        `;
+      } else if (date && prayer) {
+        records = await sql`
+          SELECT * FROM namaz_attendance 
+          WHERE date = ${date} AND prayer = ${prayer}
+          ORDER BY date DESC, prayer ASC
+        `;
+      } else if (date) {
+        records = await sql`
+          SELECT * FROM namaz_attendance 
+          WHERE date = ${date}
+          ORDER BY date DESC, prayer ASC
+        `;
+      } else if (studentId) {
+        records = await sql`
+          SELECT * FROM namaz_attendance 
+          WHERE student_id = ${parseInt(studentId)}
+          ORDER BY date DESC, prayer ASC
+        `;
+      } else {
+        records = await sql`
+          SELECT * FROM namaz_attendance 
+          ORDER BY date DESC, prayer ASC
+        `;
       }
       
-      query += ' ORDER BY date DESC, prayer ASC';
-      
-      const records = await sql(query, params);
+      console.log(`📊 Namaz GET: Found ${records.length} records for date=${date}, prayer=${prayer}`);
       return res.status(200).json(records.map(toCamelCase));
     }
 
