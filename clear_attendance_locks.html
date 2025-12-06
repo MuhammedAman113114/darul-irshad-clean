@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Attendance Locks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #005c83;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #005c83;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #004a6b;
+        }
+        .danger {
+            background: #dc3545;
+        }
+        .danger:hover {
+            background: #c82333;
+        }
+        .success {
+            background: #28a745;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 4px solid #005c83;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔓 Clear Attendance Locks</h1>
+        
+        <div class="info">
+            <strong>⚠️ Important:</strong> This tool clears attendance locks from localStorage. 
+            Use this if you need to re-take attendance for a period that's already been marked.
+        </div>
+
+        <h3>Actions:</h3>
+        <button onclick="clearAllLocks()">Clear All Attendance Locks</button>
+        <button onclick="clearTodayLocks()">Clear Today's Locks Only</button>
+        <button onclick="viewLocks()">View Current Locks</button>
+        <button class="danger" onclick="clearAllAttendanceData()">⚠️ Clear All Attendance Data</button>
+
+        <div id="result" class="result"></div>
+        <pre id="lockData" style="display:none;"></pre>
+    </div>
+
+    <script>
+        function showResult(message, type = 'success') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `result show ${type}`;
+            setTimeout(() => {
+                resultDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        function clearAllLocks() {
+            try {
+                const keys = Object.keys(localStorage);
+                let cleared = 0;
+                
+                keys.forEach(key => {
+                    if (key.startsWith('attendance_lock_')) {
+                        localStorage.removeItem(key);
+                        cleared++;
+                    }
+                });
+                
+                showResult(`✅ Cleared ${cleared} attendance locks`, 'success');
+                console.log(`Cleared ${cleared} locks`);
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearTodayLocks() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const keys = Object.keys(localStorage);
+                let cleared = 0;
+                
+                keys.forEach(key => {
+                    if (key.startsWith('attendance_lock_') && key.includes(today)) {
+                        localStorage.removeItem(key);
+                        cleared++;
+                    }
+                });
+                
+                showResult(`✅ Cleared ${cleared} locks for today (${today})`, 'success');
+                console.log(`Cleared ${cleared} locks for ${today}`);
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function viewLocks() {
+            try {
+                const keys = Object.keys(localStorage);
+                const locks = {};
+                
+                keys.forEach(key => {
+                    if (key.startsWith('attendance_lock_')) {
+                        try {
+                            locks[key] = JSON.parse(localStorage.getItem(key));
+                        } catch {
+                            locks[key] = localStorage.getItem(key);
+                        }
+                    }
+                });
+                
+                const lockDataDiv = document.getElementById('lockData');
+                lockDataDiv.textContent = JSON.stringify(locks, null, 2);
+                lockDataDiv.style.display = 'block';
+                
+                showResult(`📋 Found ${Object.keys(locks).length} locks (see below)`, 'success');
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllAttendanceData() {
+            if (!confirm('⚠️ WARNING: This will clear ALL attendance data including locks, records, and missed attendance. Are you sure?')) {
+                return;
+            }
+            
+            if (!confirm('This action cannot be undone. Continue?')) {
+                return;
+            }
+            
+            try {
+                const keys = Object.keys(localStorage);
+                let cleared = 0;
+                
+                keys.forEach(key => {
+                    if (key.startsWith('attendance_') || key.startsWith('missed_attendance_')) {
+                        localStorage.removeItem(key);
+                        cleared++;
+                    }
+                });
+                
+                showResult(`✅ Cleared ${cleared} attendance-related items`, 'success');
+                console.log(`Cleared ${cleared} attendance items`);
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check on load
+        window.onload = function() {
+            const keys = Object.keys(localStorage);
+            const lockCount = keys.filter(k => k.startsWith('attendance_lock_')).length;
+            if (lockCount > 0) {
+                showResult(`ℹ️ Found ${lockCount} attendance locks in storage`, 'success');
+            }
+        };
+    </script>
+</body>
+</html>

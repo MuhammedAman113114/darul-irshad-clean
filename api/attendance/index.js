@@ -76,13 +76,27 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       const {
         studentId, rollNo, date, period, status,
-        courseType, courseName, section, batchYear, subjectId
+        courseType, courseName, courseDivision, section, batchYear, year, subjectId
       } = req.body;
       
       const sessionCookie = req.headers.cookie?.split(';').find(c => c.trim().startsWith('session='));
       const session = JSON.parse(Buffer.from(sessionCookie.split('=')[1], 'base64').toString());
       
-      console.log('Recording attendance:', { studentId, date, period, status });
+      // Use courseDivision if courseName not provided, and year if batchYear not provided
+      const finalCourseName = courseName || courseDivision || null;
+      const finalBatchYear = batchYear || year || null;
+      
+      console.log('Recording attendance:', { 
+        studentId, 
+        rollNo: rollNo || studentId.toString(), 
+        date, 
+        period, 
+        status, 
+        courseType,
+        courseName: finalCourseName,
+        section,
+        batchYear: finalBatchYear
+      });
       
       const result = await sql`
         INSERT INTO attendance (
@@ -91,7 +105,7 @@ export default async function handler(req, res) {
           created_by, recorded_at, synced, updated_at
         ) VALUES (
           ${studentId}, ${rollNo || studentId.toString()}, ${date}, ${period}, ${status},
-          ${courseType}, ${courseName || null}, ${section || null}, ${batchYear},
+          ${courseType}, ${finalCourseName}, ${section || null}, ${finalBatchYear},
           ${subjectId || null}, ${session.user.id}, NOW(), true, NOW()
         ) RETURNING *
       `;
