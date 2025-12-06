@@ -3339,19 +3339,24 @@ export default function AttendanceScreen({ onBack, role, initialClass }: Attenda
   const emergencyCount = students.filter(s => s.status === "emergency").length;
   
   const saveAttendance = async () => {
+    console.log('🚀 saveAttendance called!', { date, period, courseType, year, courseDivision, section, studentsCount: students.length });
+    
     // Clear previous validation errors
     setValidationErrors([]);
     setValidationWarnings([]);
     
     // Step 0: Check if it's a holiday first
     if (isHoliday) {
+      console.log('❌ Blocked by holiday check');
       showNotification(`🔒 Cannot save attendance - ${holidayInfo?.name || 'Holiday'} is declared for this date`, "error");
       return;
     }
     
     // Step 1: Check attendance lock status
     const lockStatus = checkAttendanceLock(date, period);
+    console.log('🔒 Lock status:', lockStatus);
     if (lockStatus.isLocked && !lockStatus.canEdit) {
+      console.log('❌ Blocked by lock check');
       showNotification(lockStatus.reason, "error");
       return;
     }
@@ -3367,10 +3372,15 @@ export default function AttendanceScreen({ onBack, role, initialClass }: Attenda
       students
     };
     
+    console.log('🔍 Validation params:', validationParams);
+    
     try {
+      console.log('⏳ Running validation...');
       const validationResult = await validationService.preAttendanceChecks(validationParams);
+      console.log('✅ Validation result:', validationResult);
       
       if (!validationResult.valid) {
+        console.log('❌ Validation failed:', validationResult);
         setValidationErrors(validationResult.errors || [validationResult.reason || 'Validation failed']);
         showNotification("Validation failed. Please check the requirements.", "error");
         return;
