@@ -38,11 +38,24 @@
 **Files Modified:**
 - `api/students/index.js`
 
-### 4. ⚠️ Section Filtering Issue (Remaining)
+### 4. ✅ Section Filtering Fixed
 **Problem:** Attendance sheet showing students from all sections instead of just the selected section
 
-**Status:** Identified but not yet fixed
-**Next Steps:** Need to verify database `batch` field values and ensure frontend is passing correct section parameter
+**Solution:** Modified students API to accept both `batch` and `section` parameters since frontend sends `section` but database uses `batch` field
+
+**Files Modified:**
+- `api/students/index.js`
+
+### 5. ⚠️ Student Photo Upload (Blocked by Vercel Limit)
+**Problem:** Cannot update student photos - PATCH endpoint returns 404
+
+**Status:** Blocked - Vercel Hobby plan limits to 12 serverless functions
+**Workaround:** 
+- Images should be uploaded to Firebase Storage by frontend
+- Frontend should then update the database with the Firebase URL
+- Currently blocked because we need a PATCH endpoint but can't add more functions
+
+**Recommendation:** Upgrade to Vercel Pro plan or consolidate existing APIs
 
 ## Deployment Status
 - All changes pushed to GitHub: `main` branch
