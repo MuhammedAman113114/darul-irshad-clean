@@ -462,20 +462,26 @@ export default function ComprehensiveNamazScreen({ onBack, role }: NamazScreenPr
     }
   };
 
-  // Load namaz history from database on mount
+  // Load namaz history from database on mount - ALWAYS fetch from database
   useEffect(() => {
     const loadHistoryFromDatabase = async () => {
       try {
-        console.log('📥 Loading namaz history from database...');
+        console.log('📥 [HISTORY] Loading ALL namaz history from database...');
         
-        // Fetch all namaz records from database
+        // Fetch ALL namaz records from database (no date filter)
         const response = await fetch('/api/namaz-attendance', {
           credentials: 'include'
         });
         
+        console.log('📥 [HISTORY] Response status:', response.status, response.ok);
+        
         if (response.ok) {
           const dbRecords = await response.json();
-          console.log(`✅ Loaded ${dbRecords.length} namaz records from database`);
+          console.log(`✅ [HISTORY] Loaded ${dbRecords.length} namaz records from database`);
+          
+          if (dbRecords.length > 0) {
+            console.log('📊 [HISTORY] Sample record:', dbRecords[0]);
+          }
           
           // Group by date and prayer
           const grouped = new Map();
@@ -500,16 +506,21 @@ export default function ComprehensiveNamazScreen({ onBack, role }: NamazScreenPr
           });
           
           const historyFromDB = Array.from(grouped.values());
-          console.log(`📊 Organized into ${historyFromDB.length} unique sessions`);
+          console.log(`📊 [HISTORY] Organized into ${historyFromDB.length} unique sessions`);
+          console.log('📊 [HISTORY] Sessions:', historyFromDB.map(s => `${s.date} ${s.prayer}`));
           
           setNamazHistory(historyFromDB);
         } else {
-          console.log('⚠️ Failed to load from database, falling back to localStorage');
+          console.log('⚠️ [HISTORY] Failed to load from database, status:', response.status);
+          const errorText = await response.text();
+          console.log('⚠️ [HISTORY] Error:', errorText);
+          
+          // Fallback to localStorage
           const history = getNamazHistory();
           setNamazHistory(history);
         }
       } catch (error) {
-        console.error('❌ Error loading from database:', error);
+        console.error('❌ [HISTORY] Error loading from database:', error);
         // Fallback to localStorage
         const history = getNamazHistory();
         setNamazHistory(history);
