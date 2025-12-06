@@ -462,10 +462,61 @@ export default function ComprehensiveNamazScreen({ onBack, role }: NamazScreenPr
     }
   };
 
-  // Load namaz history only on mount
+  // Load namaz history from database on mount
   useEffect(() => {
-    const history = getNamazHistory();
-    setNamazHistory(history);
+    const loadHistoryFromDatabase = async () => {
+      try {
+        console.log('📥 Loading namaz history from database...');
+        
+        // Fetch all namaz records from database
+        const response = await fetch('/api/namaz-attendance', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const dbRecords = await response.json();
+          console.log(`✅ Loaded ${dbRecords.length} namaz records from database`);
+          
+          // Group by date and prayer
+          const grouped = new Map();
+          
+          dbRecords.forEach((record: any) => {
+            const key = `${record.date}_${record.prayer}`;
+            
+            if (!grouped.has(key)) {
+              grouped.set(key, {
+                date: record.date,
+                prayer: record.prayer,
+                records: []
+              });
+            }
+            
+            grouped.get(key).records.push({
+              studentId: record.studentId,
+              status: record.status,
+              name: record.name || '',
+              rollNo: record.rollNo || ''
+            });
+          });
+          
+          const historyFromDB = Array.from(grouped.values());
+          console.log(`📊 Organized into ${historyFromDB.length} unique sessions`);
+          
+          setNamazHistory(historyFromDB);
+        } else {
+          console.log('⚠️ Failed to load from database, falling back to localStorage');
+          const history = getNamazHistory();
+          setNamazHistory(history);
+        }
+      } catch (error) {
+        console.error('❌ Error loading from database:', error);
+        // Fallback to localStorage
+        const history = getNamazHistory();
+        setNamazHistory(history);
+      }
+    };
+    
+    loadHistoryFromDatabase();
   }, []);
 
   // Load existing attendance - Robust persistence system
