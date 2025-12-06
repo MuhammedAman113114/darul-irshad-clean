@@ -90,7 +90,7 @@ export default async function handler(req, res) {
           course_type, course_name, section, batch_year, subject_id,
           created_by, recorded_at, synced, updated_at
         ) VALUES (
-          ${studentId}, ${rollNo}, ${date}, ${period}, ${status},
+          ${studentId}, ${rollNo || studentId.toString()}, ${date}, ${period}, ${status},
           ${courseType}, ${courseName || null}, ${section || null}, ${batchYear},
           ${subjectId || null}, ${session.user.id}, NOW(), true, NOW()
         ) RETURNING *
