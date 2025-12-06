@@ -30,12 +30,22 @@ export default async function handler(req, res) {
 
   try {
     const sql = neon(process.env.DATABASE_URL);
-    const { courseType, year, stream, section, entries } = req.body;
+    let { courseType, year, stream, section, entries } = req.body;
+
+    // If entries is an array and has items, extract class info from first entry
+    if (!courseType && entries && Array.isArray(entries) && entries.length > 0) {
+      courseType = entries[0].courseType;
+      year = entries[0].year;
+      stream = entries[0].stream;
+      section = entries[0].section;
+    }
 
     if (!courseType || !year || !entries || !Array.isArray(entries)) {
+      console.error('Invalid request body:', req.body);
       return res.status(400).json({ 
         error: 'Missing required fields', 
-        required: ['courseType', 'year', 'entries'] 
+        required: ['courseType', 'year', 'entries'],
+        received: { courseType, year, entriesCount: entries?.length }
       });
     }
 
