@@ -15,6 +15,10 @@ server/public
 .env.development
 .env.test
 
+# Firebase credentials (NEVER COMMIT THESE!)
+*firebase*.json
+serviceAccountKey.json
+
 # Database files
 db.json
 db.json.before-restore

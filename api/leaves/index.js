@@ -64,8 +64,6 @@ export default async function handler(req, res) {
       const sessionCookie = req.headers.cookie?.split(';').find(c => c.trim().startsWith('session='));
       const session = JSON.parse(Buffer.from(sessionCookie.split('=')[1], 'base64').toString());
       
-      console.log('Creating leave:', { studentId, fromDate, toDate });
-      
       const result = await sql`
         INSERT INTO leaves (
           student_id, from_date, to_date, reason, status, created_by, created_at

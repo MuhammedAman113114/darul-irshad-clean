@@ -550,10 +550,11 @@ const ClassView = ({ classConfig, onBack, role }: any) => {
                     let response;
                     if (editingStudent) {
                       // Update existing student
-                      response = await fetch(`/api/students/${editingStudent.id}`, {
+                      response = await fetch('/api/students', {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
+                          id: editingStudent.id,
                           name: studentData.name,
                           rollNo: studentData.rollNo,
                           dob: studentData.dob,

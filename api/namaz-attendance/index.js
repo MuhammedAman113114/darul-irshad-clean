@@ -65,7 +65,6 @@ export default async function handler(req, res) {
         `;
       }
       
-      console.log(`📊 Namaz GET: Found ${records.length} records for date=${date}, prayer=${prayer}`);
       return res.status(200).json(records.map(toCamelCase));
     }
 
@@ -77,8 +76,6 @@ export default async function handler(req, res) {
       
       // Handle bulk upload (array of students)
       if (Array.isArray(students)) {
-        console.log(`📤 Recording namaz for ${students.length} students: ${prayer} on ${date}`);
-        
         const results = [];
         for (const student of students) {
           try {
@@ -113,7 +110,6 @@ export default async function handler(req, res) {
           }
         }
         
-        console.log(`✅ Recorded ${results.length}/${students.length} namaz records`);
         return res.status(201).json({ 
           success: true, 
           count: results.length,
@@ -123,7 +119,6 @@ export default async function handler(req, res) {
       
       // Handle single student (legacy support)
       const { studentId, status } = req.body;
-      console.log('Recording namaz:', { studentId, date, prayer, status });
       
       // Check if record exists
       const existing = await sql`

@@ -69,7 +69,6 @@ export default async function handler(req, res) {
       const attendance = await sql(query, params);
       const camelCaseAttendance = attendance.map(toCamelCase);
       
-      console.log(`Found ${camelCaseAttendance.length} attendance records`);
       return res.status(200).json(camelCaseAttendance);
     }
 
@@ -86,18 +85,6 @@ export default async function handler(req, res) {
       const finalCourseName = courseName || courseDivision || null;
       const finalBatchYear = batchYear || year || null;
       
-      console.log('Recording attendance:', { 
-        studentId, 
-        rollNo: rollNo || studentId.toString(), 
-        date, 
-        period, 
-        status, 
-        courseType,
-        courseName: finalCourseName,
-        section,
-        batchYear: finalBatchYear
-      });
-      
       const result = await sql`
         INSERT INTO attendance (
           student_id, roll_no, date, period, status,
@@ -111,7 +98,6 @@ export default async function handler(req, res) {
       `;
       
       const newAttendance = toCamelCase(result[0]);
-      console.log('Attendance recorded:', newAttendance.id);
       
       return res.status(201).json(newAttendance);
     }

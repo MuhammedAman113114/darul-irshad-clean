@@ -145,19 +145,55 @@ export default function StudentFormDialog({ open, onOpenChange, student, classCo
   };
   
   // Form submission handler
-  const onSubmit = (data: z.infer<typeof studentFormSchema>) => {
-    // Here, in a real implementation, you would upload the photo
-    // to a server/storage and then update the photoUrl field in data
-    // with the URL of the uploaded image before saving the student data
+  const onSubmit = async (data: z.infer<typeof studentFormSchema>) => {
+    setIsPending(true);
     
-    // For now, if there's a new photo, just simulate setting the URL
-    if (studentPhoto && photoPreview) {
-      // In a real app, this would be the URL returned from the upload service
-      data.photoUrl = photoPreview as string;
+    try {
+      // If there's a new photo, upload it first
+      if (studentPhoto && student?.id) {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          try {
+            const base64Data = (reader.result as string).split(',')[1];
+            
+            // Upload photo to Cloudinary via API
+            const photoResponse = await fetch('/api/students', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: student.id,
+                photoBase64: base64Data,
+                photoContentType: studentPhoto.type
+              })
+            });
+            
+            if (!photoResponse.ok) {
+              throw new Error('Failed to upload photo');
+            }
+            
+            const photoResult = await photoResponse.json();
+            data.photoUrl = photoResult.photoUrl;
+            
+            // Now save the student data with the photo URL
+            saveStudentData(data);
+            setIsPending(false);
+          } catch (error) {
+            console.error('Photo upload error:', error);
+            showNotification('Failed to upload photo', 'error');
+            setIsPending(false);
+          }
+        };
+        reader.readAsDataURL(studentPhoto);
+      } else {
+        // No new photo, just save the data
+        saveStudentData(data);
+        setIsPending(false);
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showNotification('Failed to save student', 'error');
+      setIsPending(false);
     }
-    
-    // Use the saveStudentData prop from parent component instead of API call
-    saveStudentData(data);
   };
   
   return (

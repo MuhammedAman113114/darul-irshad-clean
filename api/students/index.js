@@ -1,6 +1,8 @@
 // GET /api/students - List students with filters
 // POST /api/students - Create new student
+// PATCH /api/students - Update student (including photo upload)
 import { neon } from '@neondatabase/serverless';
+import { uploadStudentPhoto, deleteStudentPhoto } from '../lib/cloudinary.js';
 
 // Convert snake_case to camelCase
 function toCamelCase(obj) {
@@ -16,7 +18,7 @@ export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -69,8 +71,6 @@ export default async function handler(req, res) {
       // Convert to camelCase for frontend
       const camelCaseStudents = students.map(toCamelCase);
       
-      console.log(`Found ${camelCaseStudents.length} students with filters:`, { courseType, year, courseDivision, batch });
-      
       return res.status(200).json(camelCaseStudents);
     }
 
@@ -80,8 +80,6 @@ export default async function handler(req, res) {
         dob, bloodGroup, fatherName, motherName, contact1, contact2,
         address, aadharNumber, photoUrl, status
       } = req.body;
-      
-      console.log('Creating student:', { name, rollNo, courseType, courseDivision, year, batch });
       
       const result = await sql`
         INSERT INTO students (
@@ -97,11 +95,109 @@ export default async function handler(req, res) {
       `;
       
       const newStudent = toCamelCase(result[0]);
-      console.log('Student created:', newStudent);
       
       return res.status(201).json(newStudent);
     }
 
+    if (req.method === 'PATCH') {
+      const { id, photoBase64, photoContentType, deletePhoto, ...updateFields } = req.body;
+      
+      if (!id) {
+        return res.status(400).json({ error: 'Student ID is required' });
+      }
+
+      // Handle photo upload to Cloudinary
+      if (photoBase64 && photoContentType) {
+        try {
+          // Convert base64 to buffer
+          const photoBuffer = Buffer.from(photoBase64, 'base64');
+          
+          // Upload to Cloudinary
+          const photoUrl = await uploadStudentPhoto(id, photoBuffer, photoContentType);
+          
+          // Update student record with photo URL
+          await sql`
+            UPDATE students 
+            SET photo_url = ${photoUrl}, updated_at = NOW()
+            WHERE id = ${id}
+          `;
+          
+          return res.status(200).json({ 
+            success: true, 
+            photoUrl,
+            message: 'Photo uploaded successfully' 
+          });
+        } catch (error) {
+          console.error('Photo upload error:', error);
+          return res.status(500).json({ 
+            error: 'Failed to upload photo', 
+            message: error.message 
+          });
+        }
+      }
+
+      // Handle photo deletion
+      if (deletePhoto) {
+        try {
+          await deleteStudentPhoto(id);
+          await sql`
+            UPDATE students 
+            SET photo_url = NULL, updated_at = NOW()
+            WHERE id = ${id}
+          `;
+          
+          return res.status(200).json({ 
+            success: true, 
+            message: 'Photo deleted successfully' 
+          });
+        } catch (error) {
+          console.error('Photo deletion error:', error);
+          return res.status(500).json({ 
+            error: 'Failed to delete photo', 
+            message: error.message 
+          });
+        }
+      }
+
+      // Handle general field updates
+      if (Object.keys(updateFields).length > 0) {
+        try {
+          const setClauses = [];
+          const values = [];
+          let paramIndex = 1;
+          
+          // Convert camelCase to snake_case and build SET clause
+          for (const [key, value] of Object.entries(updateFields)) {
+            const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+            setClauses.push(`${snakeKey} = $${paramIndex++}`);
+            values.push(value);
+          }
+          
+          // Add updated_at
+          setClauses.push(`updated_at = NOW()`);
+          
+          // Add id for WHERE clause
+          values.push(id);
+          const query = `UPDATE students SET ${setClauses.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+          
+          const result = await sql(query, values);
+          
+          if (result.length === 0) {
+            return res.status(404).json({ error: 'Student not found' });
+          }
+          
+          return res.status(200).json(toCamelCase(result[0]));
+        } catch (error) {
+          console.error('Update error:', error);
+          return res.status(500).json({ 
+            error: 'Failed to update student', 
+            message: error.message 
+          });
+        }
+      }
+
+      return res.status(400).json({ error: 'No update data provided' });
+    }
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {

@@ -1,5 +1,6 @@
+// Consolidated Timetable API
 // GET /api/timetable - Fetch timetable entries
-// POST /api/timetable - Create timetable entry
+// POST /api/timetable - Create single entry OR bulk upsert (if entries array provided)
 import { neon } from '@neondatabase/serverless';
 
 function toCamelCase(obj) {
@@ -14,7 +15,7 @@ function toCamelCase(obj) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -31,9 +32,6 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const { courseType, year, stream, section, dayOfWeek } = req.query;
       
-      console.log('📅 Timetable GET request:', { courseType, year, stream, section, dayOfWeek });
-      
-      // Build query with proper Neon SQL template syntax
       let records;
       
       if (courseType && year && stream && section && dayOfWeek) {
@@ -76,16 +74,70 @@ export default async function handler(req, res) {
         `;
       }
       
-      console.log(`📅 Found ${records.length} timetable entries`);
       return res.status(200).json(records.map(toCamelCase));
     }
 
     if (req.method === 'POST') {
-      const { courseType, year, stream, section, dayOfWeek, periodNumber, subjectId, startTime, endTime } = req.body;
+      const { courseType, year, stream, section, dayOfWeek, periodNumber, subjectId, startTime, endTime, entries } = req.body;
       
       const sessionCookie = req.headers.cookie?.split(';').find(c => c.trim().startsWith('session='));
       const session = JSON.parse(Buffer.from(sessionCookie.split('=')[1], 'base64').toString());
       
+      // BULK UPSERT: If entries array is provided
+      if (entries && Array.isArray(entries)) {
+        let bulkCourseType = courseType;
+        let bulkYear = year;
+        let bulkStream = stream;
+        let bulkSection = section;
+
+        // Extract from first entry if not provided
+        if (!bulkCourseType && entries.length > 0) {
+          bulkCourseType = entries[0].courseType;
+          bulkYear = entries[0].year;
+          bulkStream = entries[0].stream;
+          bulkSection = entries[0].section;
+        }
+
+        if (!bulkCourseType || !bulkYear) {
+          return res.status(400).json({ error: 'Missing courseType or year' });
+        }
+
+        // Delete existing entries
+        await sql`
+          DELETE FROM timetable 
+          WHERE course_type = ${bulkCourseType} 
+            AND year = ${bulkYear}
+            AND stream = ${bulkStream || null}
+            AND section = ${bulkSection || null}
+        `;
+
+        // Insert new entries
+        const results = [];
+        for (const entry of entries) {
+          if (!entry.dayOfWeek || !entry.periodNumber) continue;
+
+          const result = await sql`
+            INSERT INTO timetable (
+              course_type, year, stream, section, day_of_week, 
+              period_number, subject_id, start_time, end_time, created_by
+            ) VALUES (
+              ${bulkCourseType}, ${bulkYear}, ${bulkStream || null}, ${bulkSection || null}, ${entry.dayOfWeek},
+              ${entry.periodNumber}, ${entry.subjectId || null}, ${entry.startTime || null}, ${entry.endTime || null}, ${session.user.id}
+            ) RETURNING *
+          `;
+          
+          results.push(toCamelCase(result[0]));
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: 'Timetable saved successfully',
+          count: results.length,
+          entries: results
+        });
+      }
+      
+      // SINGLE ENTRY: Create one timetable entry
       const result = await sql`
         INSERT INTO timetable (
           course_type, year, stream, section, day_of_week, 
@@ -96,7 +148,6 @@ export default async function handler(req, res) {
         ) RETURNING *
       `;
       
-      console.log(`📅 Created timetable entry: ${courseType} ${year} ${dayOfWeek} P${periodNumber}`);
       return res.status(201).json(toCamelCase(result[0]));
     }
 
@@ -104,8 +155,4 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Timetable API error:', error);
     return res.status(500).json({ 
-      error: 'Database operation failed', 
-      message: error.message 
-    });
-  }
-}
+      error: 'Database op
