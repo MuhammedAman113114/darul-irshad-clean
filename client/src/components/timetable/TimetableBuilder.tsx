@@ -227,21 +227,18 @@ export default function TimetableBuilder({ selectedClass, role }: TimetableBuild
     },
   });
 
-  // Period configuration mutation - class-specific
+  // Period configuration mutation - class-specific (stored in localStorage)
   const { mutate: savePeriodConfig, isPending: isSavingPeriodConfig } = useMutation({
     mutationFn: async (config: any) => {
       if (!selectedClass) throw new Error("No class selected");
       
       console.log(`🔧 Saving period config for: ${selectedClass.courseType} Year ${selectedClass.year} ${selectedClass.courseDivision || ''} ${selectedClass.section || ''}`, config);
       
-      return apiRequest('/api/timetable-period-config', 'POST', {
-        courseType: selectedClass.courseType,
-        year: selectedClass.year,
-        stream: selectedClass.courseDivision || null,
-        section: selectedClass.section || null,
-        defaultPeriods: config.defaultPeriods,
-        customDayPeriods: config.customDayPeriods,
-      });
+      // Store in localStorage instead of API to save serverless function quota
+      const key = `period_config_${selectedClass.courseType}_${selectedClass.year}_${selectedClass.courseDivision || 'none'}_${selectedClass.section || 'none'}`;
+      localStorage.setItem(key, JSON.stringify(config));
+      
+      return Promise.resolve({ success: true, config });
     },
     onSuccess: (data) => {
       console.log(`✅ Period config saved successfully for ${selectedClass?.courseType} Year ${selectedClass?.year}`, data);
