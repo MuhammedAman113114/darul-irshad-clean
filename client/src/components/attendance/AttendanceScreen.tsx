@@ -1574,17 +1574,21 @@ export default function AttendanceScreen({ onBack, role, initialClass }: Attenda
           console.log(`🔍 All students data:`, cleanStudents);
           
           // CRITICAL FIX: Load timetable periods when students are loaded
-          console.log(`🗓️ Loading periods for ${new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()} (${date})`);
+          console.log(`🗓️ [PERIOD] Loading periods for ${new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()} (${date})`);
           const timetablePeriods = await fetchPeriodsWithSubjects(date);
+          console.log(`🗓️ [PERIOD] Fetched ${timetablePeriods?.length || 0} periods from timetable`);
           setPeriodsWithSubjects(timetablePeriods);
           
           // Reset period selection when switching to timetable-based periods
           if (timetablePeriods && timetablePeriods.length > 0) {
             const firstTimetablePeriod = timetablePeriods[0].periodNumber.toString();
+            console.log(`🗓️ [PERIOD] Available periods:`, timetablePeriods.map(p => `P${p.periodNumber}: ${p.subjectName}`));
             if (period !== firstTimetablePeriod) {
               setPeriod(firstTimetablePeriod);
-              console.log(`🔄 Reset period selection to first timetable period: ${firstTimetablePeriod}`);
+              console.log(`🔄 [PERIOD] Reset period selection to first timetable period: ${firstTimetablePeriod}`);
             }
+          } else {
+            console.log(`⚠️ [PERIOD] No timetable periods found! Period dropdown will be empty.`);
           }
           
           // Debug: Log students with leave status
@@ -3892,7 +3896,7 @@ export default function AttendanceScreen({ onBack, role, initialClass }: Attenda
       setSheetData([]);
       setPeriodsWithSubjects([]);
       
-      console.log('⚡ IMMEDIATE LOAD: Sheet parameters changed, loading optimized data:', {
+      console.log('⚡ [SHEET] Loading attendance data from database:', {
         courseType, year, courseDivision, section, sheetMonth, activeTab
       });
       
