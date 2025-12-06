@@ -137,46 +137,65 @@ export default function ResultsScreen({ onBack, role }: ResultsScreenProps) {
     }
 
     setIsUploading(true);
-    setUploadProgress(0);
+    setUploadProgress(10);
 
-    // Convert file to base64 for storage
-    const fileReader = new FileReader();
-    fileReader.onload = async () => {
-      const base64Data = fileReader.result as string;
-      
-      const data = {
-        year,
-        courseType,
-        courseName: courseName || null,
-        section: section || null,
-        examType,
-        fileUrl: base64Data, // Store base64 data
-        fileType,
-        notes: notes || null
-      };
+    try {
+      // Convert file to base64 for upload to Cloudinary
+      const fileReader = new FileReader();
+      fileReader.onload = async () => {
+        try {
+          const base64Data = (fileReader.result as string).split(',')[1];
+          
+          setUploadProgress(30);
+          
+          // Upload to Cloudinary via API
+          const uploadResponse = await fetch('/api/results/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fileBase64: base64Data,
+              fileType: resultFile.type,
+              fileName: resultFile.name
+            }),
+            credentials: 'include'
+          });
+          
+          if (!uploadResponse.ok) {
+            throw new Error('Failed to upload file to cloud storage');
+          }
+          
+          const { fileUrl } = await uploadResponse.json();
+          setUploadProgress(70);
+          
+          // Save result metadata to database
+          const data = {
+            year,
+            courseType,
+            courseName: courseName || null,
+            section: section || null,
+            examType,
+            fileUrl, // Cloudinary URL
+            fileType,
+            notes: notes || null
+          };
 
-      try {
-        await uploadMutation.mutateAsync(data);
-        setUploadProgress(100);
-      } finally {
-        setIsUploading(false);
-        clearInterval(progressInterval);
-        setUploadProgress(0);
-      }
-    };
-    
-    fileReader.readAsDataURL(resultFile);
-
-    // Simulate upload progress
-    const progressInterval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 90) {
-          clearInterval(progressInterval);
-          return prev;
+          await uploadMutation.mutateAsync(data);
+          setUploadProgress(100);
+        } catch (error) {
+          console.error('Upload error:', error);
+          showNotification(error instanceof Error ? error.message : "Upload failed", "error");
+        } finally {
+          setIsUploading(false);
+          setUploadProgress(0);
         }
-        return prev + 10;
-      });
-    }, 200);
+      };
+      
+      fileReader.readAsDataURL(resultFile);
+    } catch (error) {
+      setIsUploading(false);
+      setUploadProgress(0);
+      showNotification("Failed to read file", "error");
+    }
   };
 
   const resetForm = () => {
